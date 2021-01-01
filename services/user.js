@@ -62,29 +62,41 @@ class User extends Model {
     });
   };
 }
+
 User.init(
   {
-    username: {
-      type: Sequelize.STRING,
-      allowNull: false,
-      unique: true,
-    },
     email: {
       type: Sequelize.STRING,
       allowNull: false,
       unique: true,
     },
+    
     fullName: {
       type: Sequelize.STRING,
       allowNull: true,
     },
+
     password: {
       type: Sequelize.STRING,
+      allowNull: false,
+      len: [4,20],
     },
-    identity_id: {
+
+    numberPhone: {
       type: Sequelize.STRING,
-      allowNull: true,
+      allowNull: false,
+      len: [10],
     },
+
+    role: {
+      type: Sequelize.STRING,
+      allowNull: false,
+    },
+    
+    accountBalance:{
+      type: Sequelize.INTEGER,
+      allowNull: false,
+    }
   },
   {
     sequelize: db,
