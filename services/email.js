@@ -1,7 +1,5 @@
 const nodemailer = require('nodemailer');
 
-console.log('email : ', process.env.EMAIL_USERNAME);
-console.log('pass : ', process.env.EMAIL_PASSWORD);
 async function send(to, subject, content){
     console.log('')
     const transporter = nodemailer.createTransport({

@@ -4,10 +4,10 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const db = require("./services/database");
 const passport = require("passport");
-const PORT = process.env.PORT || 3030;
+const PORT = process.env.PORT || 3000;
 
 const app = express();
-app.use(express.static('public'))
+app.use(express.static("public"));
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -25,6 +25,10 @@ app.use(bodyParser.urlencoded({ extended: true }));
 //   }
 // );
 
+app.use("/", (req, res) => {
+  res.send("HI GUY");
+});
+
 app.use("/register", require("./routes/register"));
 app.use("/login", require("./routes/login"));
 app.use("/user", require("./routes/user"));
@@ -36,9 +40,9 @@ app.use("/history-sale", require("./services/history-sale"));
 db.sync()
   .then(() => {
     app.listen(PORT);
-    console.log("server running at : ", PORT);
-    console.log(`http://localhost:${PORT}/`);
+    console.log("🚀 Server on. PORT : ", PORT);
   })
   .catch((err) => {
-    console.log(err);
+    console.log("❌ Setup db failed: " + err);
+    console.error(err);
   });
