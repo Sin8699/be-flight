@@ -1,7 +1,7 @@
 const Sequelize = require("sequelize");
 
 const configConnectionDB = {
-  database: process.env.DATABASE,
+  database: process.env.DATABASE_NAME,
   username: process.env.USERNAME_DB,
   password: process.env.PASSWORD_DB,
   host: process.env.HOST_DB,

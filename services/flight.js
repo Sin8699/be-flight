@@ -1,7 +1,7 @@
 const bcrypt = require("bcrypt");
 const Sequelize = require("sequelize");
 const Airport = require("./airport")
-const db = require("./database");
+const db = require("../db");
 
 const Model = Sequelize.Model;
 

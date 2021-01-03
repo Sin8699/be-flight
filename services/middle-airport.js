@@ -1,6 +1,6 @@
 const bcrypt = require("bcrypt");
 const Sequelize = require("sequelize");
-const db = require("./database");
+const db = require("../db");
 const Flight = require("./flight");
 const Airport = require("./airport");
 
