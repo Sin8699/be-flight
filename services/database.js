@@ -2,7 +2,7 @@ const Sequelize = require("sequelize");
 
 const connectionString =
   process.env.DATABASE_URL ||
-  "postgres://postgres:tuananh1@localhost:5433/Flight";
+  "postgres://postgres:1@localhost:5432/Flight";
 const db = new Sequelize(connectionString);
 
 

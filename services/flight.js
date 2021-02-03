@@ -1,12 +1,47 @@
-const bcrypt = require("bcrypt");
 const Sequelize = require("sequelize");
 const Airport = require("./airport")
 const db = require("./database");
-
 const Model = Sequelize.Model;
 
 class Flight extends Model {
 
+    static async getAllFlight() {
+        return Flight.findAll();
+    };
+
+    static async getFlightByFlightCode(flightCode) {
+        return Flight.findOne({
+            where: {
+                flightCode: flightCode,
+            }
+        })
+    };
+
+    static createFlight = async ({
+        flightCode,
+        airportFrom,
+        airportTo, 
+        dateStart,
+        timeStart,
+        status,
+        vipSeats,
+        normalSeats,
+        vipPrice,
+        normalPrice,
+    }) => {
+        return await Flight.create({
+            flightCode,
+            airportFrom,
+            airportTo, 
+            dateStart,
+            timeStart,
+            status,
+            vipSeats,
+            normalSeats,
+            vipPrice,
+            normalPrice,
+        });
+    };
 }
 
 Flight.init(
@@ -20,6 +55,7 @@ Flight.init(
         airportFrom: {
             type: Sequelize.STRING,
             belongsTo: Airport,
+            
             allowNull: false,
         },
 
@@ -29,39 +65,39 @@ Flight.init(
             allowNull: false,
         },
 
-        dateStar: {
+        dateStart: {
             type: Sequelize.DATE,
             allowNull: false
         },
 
-        timeStar: {
+        timeStart: {
             type: Sequelize.TIME,
             allowNull: false
         },
 
         status: {
             type: Sequelize.STRING,
-            defaultValue : "Ready",
+            defaultValue: "Ready",
         },
 
         vipSeats: {
             type: Sequelize.INTEGER,
-            defaultValue : 20,
+            defaultValue: 20,
         },
 
         normalSeats: {
             type: Sequelize.INTEGER,
-            defaultValue : 30,
+            defaultValue: 30,
         },
 
-        vipPrice:{
+        vipPrice: {
             type: Sequelize.INTEGER,
-            defaultValue : 0,
+            defaultValue: 0,
         },
 
-        normalPrice:{
+        normalPrice: {
             type: Sequelize.INTEGER,
-            defaultValue : 0,
+            defaultValue: 0,
         },
     },
     {
@@ -69,8 +105,7 @@ Flight.init(
         modelName: "flight",
     }
 );
-// Airport.hasMany(Flight);
-// Flight.belongsTo(Airport);
+
 
 
 module.exports = Flight;
