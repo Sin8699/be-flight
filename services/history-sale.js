@@ -7,6 +7,29 @@ const User = require("./user");
 const Flight = require("./flight");
 
 class HistorySale extends Model {
+    static createHistorySale = async ({
+    }) => {
+        return await HistorySale.create({
+
+        });
+    };
+
+    static updateHistorySale = async ({
+    }) => {
+        return await HistorySale.update({
+
+        });
+    };
+
+    static async getAllSale() {
+        return HistorySale.findAll();
+    };
+
+    static async getHistorySaleByUser(userID) {
+        return await HistorySale.findOne({
+            where: userID,
+          });
+    };
 
 }
 
