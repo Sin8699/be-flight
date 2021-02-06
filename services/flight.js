@@ -42,6 +42,34 @@ class Flight extends Model {
             normalPrice,
         });
     };
+
+    static updateFlight = async ({
+        flightCode,
+        airportFrom,
+        airportTo, 
+        dateStart,
+        timeStart,
+        status,
+        vipSeats,
+        normalSeats,
+        vipPrice,
+        normalPrice,
+    }) => {
+        return await Flight.update({
+            airportFrom:airportFrom,
+            airportTo:airportTo, 
+            dateStart:dateStart,
+            timeStart:timeStart,
+            status:status,
+            vipSeats:vipSeats,
+            normalSeats:normalSeats,
+            vipPrice:vipPrice,
+            normalPrice:normalPrice,
+        },
+        {
+            where: { flightCode : flightCode}
+        });
+    };
 }
 
 Flight.init(
