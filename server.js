@@ -10,6 +10,7 @@ const app = express();
 // app.use("/login", require("./routes/login"));
 // app.use("/user", require("./routes/user"));
 app.use("/flight", require("./routes/flight"));
+app.use("/airport", require("./routes/airport"));
 
 db.sync()
   .then(() => {

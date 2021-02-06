@@ -19,16 +19,7 @@ router.get('/:flightCode', asyncHandler(async function getFlight(req, res) {
 }));
 
 router.post("/create-flight", asyncHandler(async function createFlight(req, res) {
-    let { flightCode,
-        airportFrom,
-        airportTo,
-        dateStart,
-        timeStart,
-        status,
-        vipSeats,
-        normalSeats,
-        vipPrice,
-        normalPrice, } = req.query;
+    let { flightCode, normalPrice, } = req.query;
 
     timeStart = timeStart;
     console.log(timeStart);
@@ -74,27 +65,27 @@ router.post("/update-flight", asyncHandler(async function updateFlight(req, res)
         vipPrice,
         normalPrice, } = req.query;
 
-        timeStart = timeStart;
-        console.log(timeStart);
-        dateStart = dateStart;
-        console.log(dateStart);
-        vipSeats = parseInt(vipSeats);
-        normalSeats = parseInt(normalSeats);
-        vipPrice = parseInt(vipPrice);
-        normalPrice = parseInt(normalPrice);    
+    timeStart = timeStart;
+    console.log(timeStart);
+    dateStart = dateStart;
+    console.log(dateStart);
+    vipSeats = parseInt(vipSeats);
+    normalSeats = parseInt(normalSeats);
+    vipPrice = parseInt(vipPrice);
+    normalPrice = parseInt(normalPrice);
 
-        flight.updateFlight({
-            flightCode,
-            airportFrom,
-            airportTo,
-            dateStart,
-            timeStart,
-            status,
-            vipSeats,
-            normalSeats,
-            vipPrice,
-            normalPrice,
-        })
+    flight.updateFlight({
+        flightCode,
+        airportFrom,
+        airportTo,
+        dateStart,
+        timeStart,
+        status,
+        vipSeats,
+        normalSeats,
+        vipPrice,
+        normalPrice,
+    })
 
         .then(async () => {
             res.json({ message: "Flight update successfully" });
