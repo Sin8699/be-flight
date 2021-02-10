@@ -1,10 +1,11 @@
+require('dotenv').config();
+
 const cors = require('cors');
 const express = require('express');
 const passport = require('passport');
 const db = require('./db');
 const PORT = process.env.PORT || 3000;
 
-require('dotenv').config();
 require('express-async-errors');
 
 const app = express();
@@ -31,7 +32,6 @@ app.get('/', (req, res) => {
 //   });
 // });
 
-app.use('/register', require('./routes/register'));
 app.use('/user', require('./routes/user'));
 app.use('/airport', require('./routes/airport'));
 app.use('/flight', require('./routes/flight'));
