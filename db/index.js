@@ -1,4 +1,4 @@
-const Sequelize = require("sequelize");
+const Sequelize = require('sequelize');
 
 const configConnectionDB = {
   database: process.env.DATABASE_NAME,
@@ -6,7 +6,7 @@ const configConnectionDB = {
   password: process.env.PASSWORD_DB,
   host: process.env.HOST_DB,
   port: 5432,
-  dialect: "postgres",
+  dialect: 'postgres',
   dialectOptions: {
     ssl: {
       require: true,
@@ -15,6 +15,8 @@ const configConnectionDB = {
   },
 };
 
-const db = new Sequelize(configConnectionDB);
+const connectionString = process.env.DATABASE_URL || 'postgres://postgres:1@localhost:5432/Flight';
+
+const db = new Sequelize(configConnectionDB || connectionString);
 
 module.exports = db;
