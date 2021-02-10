@@ -1,51 +1,50 @@
-const bcrypt = require("bcrypt");
-const Sequelize = require("sequelize");
-const db = require("../db");
-const { sequelize } = require("./user");
+const bcrypt = require('bcrypt');
+const Sequelize = require('sequelize');
+const db = require('../db');
+const { sequelize } = require('./user');
 const Model = Sequelize.Model;
 
 class Airport extends Model {
   static async getAllAirport() {
     return Airport.findAll();
-  };
+  }
 
   static async getAirportByAirportCode(airportCode) {
     return Airport.findOne({
       where: {
         airportCode: airportCode,
-      }
-    })
-  };
+      },
+    });
+  }
 
-  static createAirport = async ({
-    name,
-    airportCode,
-    address
-  }) => {
+  static createAirport = async ({ name, airportCode, address }) => {
     return await Airport.create({
       name,
       airportCode,
-      address
+      address,
     });
   };
 
-  static updateAirport = async ({
-    name,
-    airportCode,
-    address,
-  }) => {
-    return await Airport.update({
-      name: name,
-      airportCode: airportCode,
-      address: address
-    },
+  static updateAirport = async ({ name, airportCode, address }) => {
+    return await Airport.update(
       {
-        where: { airportCode: airportCode }
-      });
+        name: name,
+        airportCode: airportCode,
+        address: address,
+      },
+      {
+        where: { airportCode: airportCode },
+      }
+    );
   };
 }
 Airport.init(
   {
+    id: {
+      type: Sequelize.INTEGER,
+      autoIncrement: true,
+      primaryKey: true,
+    },
     name: {
       type: Sequelize.STRING,
       allowNull: false,
@@ -61,12 +60,11 @@ Airport.init(
     address: {
       type: Sequelize.STRING,
       allowNull: true,
-    }
-
+    },
   },
   {
     sequelize: db,
-    modelName: "airport",
+    modelName: 'airport',
   }
 );
-module.exports = Airport
+module.exports = Airport;

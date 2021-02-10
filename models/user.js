@@ -1,6 +1,6 @@
-const bcrypt = require("bcrypt");
-const Sequelize = require("sequelize");
-const db = require("../db");
+const bcrypt = require('bcrypt');
+const Sequelize = require('sequelize');
+const db = require('../db');
 
 const Model = Sequelize.Model;
 
@@ -19,6 +19,7 @@ class User extends Model {
   static async getAllUsers() {
     return await User.findAll();
   }
+
   static async updatePassword(userId, newPass) {
     return await User.update(
       {
@@ -29,48 +30,59 @@ class User extends Model {
       }
     );
   }
-  static async updateUser({
-    userId,
-    email,
-    fullName,
-    identity_id,
-  }) {
+
+  static async updateUser(userId, { email, fullName, ...rest }) {
     return await User.update(
       {
         email,
         fullName,
-        identity_id,
+        ...rest,
       },
       {
         where: { id: userId },
       }
     );
   }
-  static createUser = async ({
-    username,
-    password,
-    email,
-    fullName,
-    identity_id,
-  }) => {
+  static async updateForgot({ resetPasswordToken, resetPasswordExpireTime, userId }) {
+    return await User.update(
+      {
+        resetPasswordToken,
+        resetPasswordExpireTime,
+      },
+      {
+        where: { id: userId },
+      }
+    );
+  }
+  static async findUserByQuery(where) {
+    return await User.findAll({
+      where,
+    });
+  }
+  static createUser = async ({ username, password, email, fullName }) => {
     return await User.create({
       username,
       password: this.hashPassword(password),
       email,
       fullName,
-      identity_id,
     });
   };
 }
 
 User.init(
   {
+    id: {
+      type: Sequelize.INTEGER,
+      autoIncrement: true,
+      primaryKey: true,
+    },
+
     email: {
       type: Sequelize.STRING,
       allowNull: false,
       unique: true,
     },
-    
+
     fullName: {
       type: Sequelize.STRING,
       allowNull: true,
@@ -79,7 +91,7 @@ User.init(
     password: {
       type: Sequelize.STRING,
       allowNull: false,
-      len: [4,20],
+      len: [4, 20],
     },
 
     numberPhone: {
@@ -91,16 +103,29 @@ User.init(
     role: {
       type: Sequelize.STRING,
       allowNull: false,
+      enum: ['GUEST', 'ADMIN'],
     },
-    
-    accountBalance:{
+
+    accountBalance: {
       type: Sequelize.INTEGER,
       allowNull: false,
-    }
+      defaultValue: 0,
+    },
+
+    resetPasswordToken: {
+      type: Sequelize.STRING,
+      defaultValue: null,
+    },
+
+    resetPasswordExpireTime: {
+      type: Sequelize.DATE,
+      defaultValue: null,
+    },
   },
   {
     sequelize: db,
-    modelName: "user",
+    modelName: 'user',
+    timestamps: true,
   }
 );
 
