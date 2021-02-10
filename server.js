@@ -25,7 +25,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 //   }
 // );
 
-app.use('/', (req, res) => {
+app.get('/', (req, res) => {
   res.send('HI GUY');
 });
 
@@ -42,7 +42,7 @@ db.sync()
     app.listen(PORT);
     console.log('🚀 Server on. PORT : ', PORT);
   })
-  .catch(err => {
+  .catch((err) => {
     console.log('❌ Setup db failed: ' + err);
     console.error(err);
   });
