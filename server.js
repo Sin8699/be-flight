@@ -23,8 +23,8 @@ app.get('/', (req, res) => {
 });
 
 // // middlewares
-// app.use(passport.initialize());
-// require('./middlewares/passport')(passport);
+app.use(passport.initialize());
+require('./middlewares/passport')(passport);
 
 // app.get('/', passport.authenticate('jwt', { session: false }), async (req, res) => {
 //   res.json({

@@ -29,25 +29,34 @@ class User extends Model {
       }
     );
   }
-  static async updateUser({ userId, email, fullName, identity_id }) {
+  static async updateUser({ userId, email, fullName }) {
     return await User.update(
       {
         email,
         fullName,
-        identity_id,
       },
       {
         where: { id: userId },
       }
     );
   }
-  static createUser = async ({ username, password, email, fullName, identity_id }) => {
+  static async updateForgot({ resetPasswordToken, resetPasswordExpireTime, userId }) {
+    return await User.update(
+      {
+        resetPasswordToken,
+        resetPasswordExpireTime,
+      },
+      {
+        where: { id: userId },
+      }
+    );
+  }
+  static createUser = async ({ username, password, email, fullName }) => {
     return await User.create({
       username,
       password: this.hashPassword(password),
       email,
       fullName,
-      identity_id,
     });
   };
 }
@@ -94,11 +103,21 @@ User.init(
       allowNull: false,
       defaultValue: 0,
     },
+
+    resetPasswordToken: {
+      type: Sequelize.STRING,
+      defaultValue: null,
+    },
+
+    resetPasswordExpireTime: {
+      type: Sequelize.STRING,
+      defaultValue: null,
+    },
   },
   {
     sequelize: db,
     modelName: 'user',
-    timestamps: false,
+    timestamps: true,
   }
 );
 
