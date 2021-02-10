@@ -1,6 +1,6 @@
-const bcrypt = require("bcrypt");
-const Sequelize = require("sequelize");
-const db = require("../db");
+const bcrypt = require('bcrypt');
+const Sequelize = require('sequelize');
+const db = require('../db');
 
 const Model = Sequelize.Model;
 
@@ -29,12 +29,7 @@ class User extends Model {
       }
     );
   }
-  static async updateUser({
-    userId,
-    email,
-    fullName,
-    identity_id,
-  }) {
+  static async updateUser({ userId, email, fullName, identity_id }) {
     return await User.update(
       {
         email,
@@ -46,13 +41,7 @@ class User extends Model {
       }
     );
   }
-  static createUser = async ({
-    username,
-    password,
-    email,
-    fullName,
-    identity_id,
-  }) => {
+  static createUser = async ({ username, password, email, fullName, identity_id }) => {
     return await User.create({
       username,
       password: this.hashPassword(password),
@@ -65,12 +54,18 @@ class User extends Model {
 
 User.init(
   {
+    id: {
+      type: Sequelize.INTEGER,
+      autoIncrement: true,
+      primaryKey: true,
+    },
+
     email: {
       type: Sequelize.STRING,
       allowNull: false,
       unique: true,
     },
-    
+
     fullName: {
       type: Sequelize.STRING,
       allowNull: true,
@@ -79,7 +74,7 @@ User.init(
     password: {
       type: Sequelize.STRING,
       allowNull: false,
-      len: [4,20],
+      len: [4, 20],
     },
 
     numberPhone: {
@@ -91,16 +86,19 @@ User.init(
     role: {
       type: Sequelize.STRING,
       allowNull: false,
+      enum: ['GUEST', 'ADMIN'],
     },
-    
-    accountBalance:{
+
+    accountBalance: {
       type: Sequelize.INTEGER,
       allowNull: false,
-    }
+      defaultValue: 0,
+    },
   },
   {
     sequelize: db,
-    modelName: "user",
+    modelName: 'user',
+    timestamps: false,
   }
 );
 

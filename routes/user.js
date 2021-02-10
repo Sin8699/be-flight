@@ -4,11 +4,51 @@ const passport = require('passport');
 const _ = require('lodash');
 const sendMail = require('../models/email');
 
-router.get('/', passport.authenticate('jwt', { session: false }), async (req, res) => {
-  res.json({
-    user: req.user.dataValues,
-  });
+router.post('/login', async function (req, res, next) {
+  const { username, hashPassword } = req.body;
+  if (username && hashPassword) {
+    let user = await User.getUser({ username });
+    if (!user) {
+      res.status(401).json({ message: 'No such user found' });
+    }
+    if (User.verifyPassword(hashPassword, user.password)) {
+      let payload = { id: user.id, role: user.role };
+      let token = jwt.sign(payload, JWT_SECRET, {
+        issuer: 'vnbc@rip113',
+        expiresIn: '10h',
+      });
+      res.json({
+        code: 0,
+        message: 'Login successful',
+        token: token,
+        email: user.email,
+      });
+    } else {
+      res.status(401).json({ code: 1, message: 'Password is incorrect' });
+    }
+  }
 });
+
+router.post('/register', function (req, res, next) {
+  const { username, password, email, fullName, numberPhone } = req.body;
+  User.createUser({
+    username,
+    password,
+    email,
+    fullName,
+    numberPhone,
+    role,
+  })
+    .then(async () => {
+      res.json({ message: 'User created successfully' });
+    })
+    .catch((err) => {
+      res.json({
+        error: 'Error when create account.',
+      });
+    });
+});
+
 router.post('/changePassword', passport.authenticate('jwt', { session: false }), async (req, res) => {
   const userId = _.get(req, 'user.dataValues.id', null);
   const oldPass = _.get(req, 'body.oldPass', null);
@@ -25,6 +65,7 @@ router.post('/changePassword', passport.authenticate('jwt', { session: false }),
     message: 'Successfully updated password.',
   });
 });
+
 router.post('/forgotPassword', async (req, res) => {
   const email = _.get(req, 'body.email', null);
   const user = await User.getUser({
@@ -48,6 +89,7 @@ router.post('/forgotPassword', async (req, res) => {
     message: 'Okay',
   });
 });
+
 router.put('/update-user', passport.authenticate('jwt', { session: false }), async (req, res) => {
   // check staff token
   const stateUser = _.get(req, 'user.dataValues');
@@ -82,4 +124,5 @@ router.put('/update-user', passport.authenticate('jwt', { session: false }), asy
     });
   }
 });
+
 module.exports = router;
