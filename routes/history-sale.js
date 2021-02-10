@@ -3,7 +3,6 @@ const historySale = require("../services/history-sale");
 const asyncHandler = require('express-async-handler');
 
 router.get('/', asyncHandler(async function getListHistorySale(req, res) {
-
     const listSale = await historySale.getAllSale();
     res.json({
         listSale: listSale
@@ -43,7 +42,5 @@ router.post("/create-sale", asyncHandler(async function createSale(req, res) {
             });
         });
 }));
-
-
 
 module.exports = router;
