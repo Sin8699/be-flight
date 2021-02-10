@@ -1,16 +1,23 @@
-const bcrypt = require("bcrypt");
 const Sequelize = require("sequelize");
 const db = require("../db");
-const { sequelize } = require("./user");
 const Model = Sequelize.Model;
 const User = require("./user");
 const Flight = require("./flight");
 
 class HistorySale extends Model {
     static createHistorySale = async ({
+        userID,
+        flightCode,
+        typeSeat,
+        dateSale,
+        status
     }) => {
         return await HistorySale.create({
-
+            userID,
+            flightCode,
+            typeSeat,
+            dateSale,
+            status
         });
     };
 
@@ -18,7 +25,10 @@ class HistorySale extends Model {
     }) => {
         return await HistorySale.update({
 
-        });
+        },
+            {
+                where: {}
+            });
     };
 
     static async getAllSale() {
@@ -27,8 +37,14 @@ class HistorySale extends Model {
 
     static async getHistorySaleByUser(userID) {
         return await HistorySale.findOne({
-            where: userID,
-          });
+            where: { userID: userID },
+        });
+    };
+
+    static async getHistorySaleByYear(year) {
+        return await HistorySale.findAll({ 
+           
+        });
     };
 
 }
@@ -56,6 +72,10 @@ HistorySale.init(
             type: Sequelize.DATE,
             allowNull: false,
         },
+        status: {
+            type: Sequelize.BOOLEAN,
+            allowNull: true,
+        }
     },
     {
         sequelize: db,
