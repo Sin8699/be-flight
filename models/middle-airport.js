@@ -14,7 +14,7 @@ class MiddleAirport extends Model {
     static async getMiddleAirportByFlightCode(flightCode) {
         return MiddleAirport.findAll({
             where: {
-                flightCode: flightCode,
+                flightCode: flightCode
             }
         })
     };

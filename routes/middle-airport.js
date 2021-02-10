@@ -42,6 +42,26 @@ router.get('/create-data',
     })
 );
 
+router.post('/update-middle-airport',
+    asyncHandler(async function updateMiddleAirport(req, res) {
+        const { flightCode, airportCode, timeDelay } = req.body;
+        await middleAirport.updateMiddleAirport({
+            flightCode,
+            airportCode,
+            timeDelay
+        })
+            .then(async () => {
+                res.json({ message: 'middle airport update successfully' });
+            })
+            .catch((err) => {
+                res.json({
+                    error: 'Error when update middle airport.',
+                    err: err,
+                });
+            });
+    })
+);
+
 router.post('/create-middle-airport',
     asyncHandler(async function getListMiddleAirport(req, res) {
         const { flightCode, airportCode, timeDelay } = req.body;
@@ -51,16 +71,15 @@ router.post('/create-middle-airport',
             timeDelay
         })
             .then(async () => {
-                res.json({ message: 'Flight created successfully' });
+                res.json({ message: 'middle airport created successfully' });
             })
             .catch((err) => {
                 res.json({
-                    error: 'Error when create flight.',
+                    error: 'Error when create middle airport.',
                     err: err,
                 });
             });
     })
 );
-
 
 module.exports = router;

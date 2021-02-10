@@ -2,8 +2,7 @@ const router = require('express').Router();
 const asyncHandler = require('express-async-handler');
 const flight = require('../models/flight');
 
-router.get(
-  '/create-data',
+router.get('/create-data',
   asyncHandler(async function (req, res) {
     for (let i = 0; i < 5; i++) {
       const index = Math.floor(Math.random() * Math.floor(5));
@@ -38,8 +37,7 @@ router.get(
   })
 );
 
-router.get(
-  '/',
+router.get('/',
   asyncHandler(async function getListFlight(req, res) {
     const listFlight = await flight.getAllFlight();
     res.json({
@@ -48,8 +46,7 @@ router.get(
   })
 );
 
-router.get(
-  '/:flightCode',
+router.get('/:flightCode',
   asyncHandler(async function getFlight(req, res) {
     const { flightCode } = req.params;
     const flightInfor = await flight.getFlightByFlightCode(flightCode);
@@ -59,8 +56,7 @@ router.get(
   })
 );
 
-router.post(
-  '/create-flight',
+router.post('/create-flight',
   asyncHandler(async function createFlight(req, res) {
     let { flightCode,
       airportFrom,
@@ -98,8 +94,7 @@ router.post(
   })
 );
 
-router.post(
-  '/update-flight',
+router.post('/update-flight',
   asyncHandler(async function updateFlight(req, res) {console.log(req.body);
     let {
       flightCode,
