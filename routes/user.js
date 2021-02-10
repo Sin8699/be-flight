@@ -100,35 +100,58 @@ router.post('/forgot-password', async (req, res) => {
     `Please reset your password now, its time limit is 1 hour : ${resetPasswordUrl}`
   );
 
+  return res.json({
+    message: 'Check your email to reset password',
+  });
+});
+
+router.post('/reset-password/:token', async (req, res) => {
+  const token = req.params.token;
+
+  const user = await User.findUserByQuery({
+    resetPasswordToken: token,
+    resetPasswordExpireTime: {
+      $gt: new Date(),
+    },
+  });
+
+  console.log('user', user);
+
+  if (!user) {
+    return res.status(400).send({
+      message: 'User not found',
+    });
+  }
+
+  const newPassword = _.trim(req.body.newPassword);
+
+  const hashed = User.hashPassword(newPassword);
+
+  await User.updateUser(user.id, {
+    password: hashed,
+    resetPasswordToken: null,
+    resetPasswordExpireTime: null,
+  });
+
   return res.status(400).send({
     message: 'Check your email to reset password',
   });
 });
 
 router.put('/update-user', passport.authenticate('jwt', { session: false }), async (req, res) => {
-  // check staff token
   const stateUser = _.get(req, 'user.dataValues');
+  console.log('stateUser', stateUser);
   if (stateUser.role !== 'ADMIN') {
     return res.status(403).send({
       error: 'Forbidden',
     });
   }
 
-  const user = await User.getUser({
-    id: stateUser.id,
-  });
-
-  if (!user) {
-    return res.status(400).send({
-      error: 'User not found.',
-    });
-  }
-
   const data = _.get(req, 'body');
+  const userId = stateUser.id;
 
   try {
-    await User.updateUser({
-      userId,
+    await User.updateUser(userId, {
       ...data,
     });
     return res.json({

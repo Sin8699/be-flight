@@ -19,6 +19,7 @@ class User extends Model {
   static async getAllUsers() {
     return await User.findAll();
   }
+
   static async updatePassword(userId, newPass) {
     return await User.update(
       {
@@ -29,11 +30,13 @@ class User extends Model {
       }
     );
   }
-  static async updateUser({ userId, email, fullName }) {
+
+  static async updateUser(userId, { email, fullName, ...rest }) {
     return await User.update(
       {
         email,
         fullName,
+        ...rest,
       },
       {
         where: { id: userId },
@@ -50,6 +53,11 @@ class User extends Model {
         where: { id: userId },
       }
     );
+  }
+  static async findUserByQuery(where) {
+    return await User.findAll({
+      where,
+    });
   }
   static createUser = async ({ username, password, email, fullName }) => {
     return await User.create({
@@ -110,7 +118,7 @@ User.init(
     },
 
     resetPasswordExpireTime: {
-      type: Sequelize.STRING,
+      type: Sequelize.DATE,
       defaultValue: null,
     },
   },
