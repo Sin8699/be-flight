@@ -64,7 +64,7 @@ MiddleAirport.init(
         },
 
         timeDelay: {
-            type: Sequelize.INTEGER
+            type: Sequelize.TIME
         },
     },
     {

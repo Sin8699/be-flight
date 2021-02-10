@@ -62,7 +62,6 @@ router.get(
 router.post(
   '/create-flight',
   asyncHandler(async function createFlight(req, res) {
-    console.log(req.body);
     let { flightCode,
       airportFrom,
       airportTo,
@@ -101,8 +100,7 @@ router.post(
 
 router.post(
   '/update-flight',
-  asyncHandler(async function updateFlight(req, res) {
-    console.log(req.body);
+  asyncHandler(async function updateFlight(req, res) {console.log(req.body);
     let {
       flightCode,
       airportFrom,

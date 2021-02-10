@@ -35,6 +35,7 @@ require('./middlewares/passport')(passport);
 app.use('/user', require('./routes/user'));
 app.use('/airport', require('./routes/airport'));
 app.use('/flight', require('./routes/flight'));
+app.use('/middle-airport', require('./routes/middle-airport'));
 
 app.use(function (req, res) {
   res.status(404).json({ code: 1, message: 'Not found' });

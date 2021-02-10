@@ -2,8 +2,7 @@ const router = require('express').Router();
 const airport = require('../models/airport');
 const asyncHandler = require('express-async-handler');
 
-router.get(
-  '/',
+router.get('/',
   asyncHandler(async function getListAirport(req, res) {
     const listAirport = await airport.getAllAirport();
     res.json({
@@ -11,7 +10,6 @@ router.get(
     });
   })
 );
-
 
 router.get('/create-data',
   asyncHandler(async function (req, res) {
@@ -31,8 +29,7 @@ router.get('/create-data',
   })
 );
 
-router.get(
-  '/:airportCode',
+router.get('/:airportCode',
   asyncHandler(async function getAirport(req, res) {
     const { airportCode } = req.params;
     const airportInfor = await airport.getAirportByAirportCode(airportCode);
@@ -42,10 +39,9 @@ router.get(
   })
 );
 
-router.post(
-  '/create-airport',
+router.post('/create-airport',
   asyncHandler(async function createAirport(req, res) {
-    const { name, airportCode, address } = req.query;
+    const { name, airportCode, address } = req.body;
 
     airport
       .createAirport({
@@ -65,8 +61,7 @@ router.post(
   })
 );
 
-router.post(
-  '/update-airport',
+router.post('/update-airport',
   asyncHandler(async function updateAirport(req, res) {
     const { name, airportCode, address } = req.query;
     console.log(name);
