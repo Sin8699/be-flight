@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const historySale = require("../services/history-sale");
+const historySale = require("../models/history-sale");
 const asyncHandler = require('express-async-handler');
 
 router.get('/', asyncHandler(async function getListHistorySale(req, res) {

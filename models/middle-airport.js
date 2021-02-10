@@ -7,7 +7,46 @@ const Airport = require("./airport");
 const Model = Sequelize.Model;
 
 class MiddleAirport extends Model {
+    static async getAllMiddleAirport() {
+        return MiddleAirport.findAll();
+    };
 
+    static async getMiddleAirportByFlightCode(flightCode) {
+        return MiddleAirport.findAll({
+            where: {
+                flightCode: flightCode,
+            }
+        })
+    };
+
+    static createMiddleAirport = async ({
+        flightCode,
+        airportCode,
+        timeDelay
+    }) => {
+        return await MiddleAirport.create({
+            flightCode,
+            airportCode,
+            timeDelay
+        });
+    };
+
+    static updateMiddleAirport = async ({
+        flightCode,
+        airportCode,
+        timeDelay
+    }) => {
+        return await MiddleAirport.update({
+            timeDelay: timeDelay
+        },
+            {
+                where: {
+                    and: [
+                        { flightCode: flightCode },
+                        { airportCode: airportCode }]
+                }
+            });
+    };
 }
 
 MiddleAirport.init(
@@ -25,7 +64,7 @@ MiddleAirport.init(
         },
 
         timeDelay: {
-            type: Sequelize.TIME
+            type: Sequelize.INTEGER
         },
     },
     {

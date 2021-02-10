@@ -12,6 +12,25 @@ router.get(
   })
 );
 
+
+router.get('/create-data',
+  asyncHandler(async function (req, res) {
+    for (let i = 0; i < 5; i++) {
+      const name = "Airport " + i.toString();
+      const airportCode = "A " + i.toString();
+      const address = "address " + i.toString();
+      await airport.createAirport({
+        name,
+        airportCode,
+        address,
+      })
+    }
+    res.json({
+      status: "Done"
+    })
+  })
+);
+
 router.get(
   '/:airportCode',
   asyncHandler(async function getAirport(req, res) {
