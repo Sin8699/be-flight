@@ -2,6 +2,7 @@ const router = require('express').Router();
 const asyncHandler = require('express-async-handler');
 const flight = require('../models/flight');
 const { ROLE_USER } = require('../constant');
+const passport = require('passport');
 
 router.get(
   '/create-data',
@@ -13,7 +14,7 @@ router.get(
       const airportFrom = 'A ' + index.toString();
       const airportTo = 'A ' + index1.toString();
       const dateStart = Date.now();
-      const timeStart = '15:30:00';
+      const minimumTime = '15:30:00';
       const status = 'Ready';
       const vipSeats = 20;
       const normalSeats = 30;
@@ -25,7 +26,6 @@ router.get(
         airportFrom,
         airportTo,
         dateStart,
-        timeStart,
         status,
         vipSeats,
         normalSeats,
@@ -86,98 +86,96 @@ router.get('/:flightCode', passport.authenticate('jwt', { session: false }), asy
   }
 });
 
-router.post(
-  '/create-flight',
-  asyncHandler(async function createFlight(req, res) {
-    console.log(req.body);
-    let {
+router.post('/create-flight', passport.authenticate('jwt', { session: false }), async (req, res) => {
+  const stateUser = _.get(req, 'user.dataValues');
+  if (stateUser.role !== ROLE_USER.ADMIN) return res.status(403).json({ message: 'Forbidden' });
+
+  const {
+    flightCode,
+    airportFrom,
+    airportTo,
+    dateStart,
+    minimumTime,
+    status,
+    vipSeats,
+    normalSeats,
+    vipPrice,
+    normalPrice,
+  } = req.body;
+
+  flight
+    .createFlight({
       flightCode,
       airportFrom,
       airportTo,
       dateStart,
-      timeStart,
+      minimumTime,
       status,
       vipSeats,
       normalSeats,
       vipPrice,
       normalPrice,
-    } = req.body;
-
-    flight
-      .createFlight({
-        flightCode,
-        airportFrom,
-        airportTo,
-        dateStart,
-        timeStart,
-        status,
-        vipSeats,
-        normalSeats,
-        vipPrice,
-        normalPrice,
-      })
-      .then(async () => {
-        res.json({ message: 'Flight created successfully' });
-      })
-      .catch((err) => {
-        res.json({
-          error: 'Error when create flight.',
-          err: err,
-        });
+    })
+    .then(async () => {
+      res.json({ message: 'Flight created successfully' });
+    })
+    .catch((err) => {
+      res.json({
+        error: 'Error when create flight.',
+        err: err,
       });
-  })
-);
+    });
+});
 
-router.post(
-  '/update-flight',
-  asyncHandler(async function updateFlight(req, res) {
-    console.log(req.body);
-    let {
+router.post('/update-flight', passport.authenticate('jwt', { session: false }), async (req, res) => {
+  const stateUser = _.get(req, 'user.dataValues');
+  if (stateUser.role !== ROLE_USER.ADMIN) return res.status(403).json({ message: 'Forbidden' });
+
+  const {
+    flightCode,
+    airportFrom,
+    airportTo,
+    dateStart,
+    minimumTime,
+    status,
+    vipSeats,
+    normalSeats,
+    vipPrice,
+    normalPrice,
+  } = req.body;
+
+  minimumTime = minimumTime;
+  console.log(minimumTime);
+  dateStart = dateStart;
+  console.log(dateStart);
+  vipSeats = parseInt(vipSeats);
+  normalSeats = parseInt(normalSeats);
+  vipPrice = parseInt(vipPrice);
+  normalPrice = parseInt(normalPrice);
+
+  flight
+    .updateFlight({
       flightCode,
       airportFrom,
       airportTo,
       dateStart,
-      timeStart,
+      minimumTime,
       status,
       vipSeats,
       normalSeats,
       vipPrice,
       normalPrice,
-    } = req.body;
+    })
 
-    timeStart = timeStart;
-    console.log(timeStart);
-    dateStart = dateStart;
-    console.log(dateStart);
-    vipSeats = parseInt(vipSeats);
-    normalSeats = parseInt(normalSeats);
-    vipPrice = parseInt(vipPrice);
-    normalPrice = parseInt(normalPrice);
-
-    flight
-      .updateFlight({
-        flightCode,
-        airportFrom,
-        airportTo,
-        dateStart,
-        timeStart,
-        status,
-        vipSeats,
-        normalSeats,
-        vipPrice,
-        normalPrice,
-      })
-
-      .then(async () => {
-        res.json({ message: 'Flight update successfully' });
-      })
-      .catch((err) => {
-        res.json({
-          error: 'Error when update flight.',
-          err: err,
-        });
+    .then(async () => {
+      res.json({ message: 'Flight update successfully' });
+    })
+    .catch((err) => {
+      res.json({
+        error: 'Error when update flight.',
+        err: err,
       });
-  })
-);
+    });
+});
 
 module.exports = router;

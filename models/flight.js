@@ -121,9 +121,10 @@ Flight.init(
       allowNull: false,
     },
 
-    timeStart: {
+    minimumTime: {
       type: Sequelize.TIME,
       allowNull: false,
+      defaultValue: '00:30',
     },
 
     status: {
