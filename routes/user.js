@@ -158,7 +158,6 @@ router.post('/reset-password/:token', async (req, res) => {
 
 router.put('/update-user', passport.authenticate('jwt', { session: false }), async (req, res) => {
   const stateUser = _.get(req, 'user.dataValues');
-  console.log('stateUser', stateUser);
   if (stateUser.role !== 'ADMIN') {
     return res.status(403).send({
       error: 'Forbidden',
