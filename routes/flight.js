@@ -7,16 +7,16 @@ router.get(
   asyncHandler(async function (req, res) {
     for (let i = 0; i < 5; i++) {
       const index = Math.floor(Math.random() * Math.floor(5));
-      const index1 =Math.floor(Math.random() * Math.floor(5));
-      const flightCode = "F " + i ;
-      const airportFrom = "A " + index.toString();
-      const airportTo = "A " + index1.toString();
+      const index1 = Math.floor(Math.random() * Math.floor(5));
+      const flightCode = 'F ' + i;
+      const airportFrom = 'A ' + index.toString();
+      const airportTo = 'A ' + index1.toString();
       const dateStart = Date.now();
-      const timeStart = "15:30:00";
-      const status = "Ready";
+      const timeStart = '15:30:00';
+      const status = 'Ready';
       const vipSeats = 20;
       const normalSeats = 30;
-      const vipPrice = 2000 ;
+      const vipPrice = 2000;
       const normalPrice = 1000;
 
       await flight.createFlight({
@@ -30,11 +30,11 @@ router.get(
         normalSeats,
         vipPrice,
         normalPrice,
-      })
+      });
     }
     res.json({
-      status: "Done"
-    })
+      status: 'Done',
+    });
   })
 );
 
@@ -52,9 +52,9 @@ router.get(
   '/:flightCode',
   asyncHandler(async function getFlight(req, res) {
     const { flightCode } = req.params;
-    const flightInfor = await flight.getFlightByFlightCode(flightCode);
+    const flightInfo = await flight.getFlightByFlightCode(flightCode);
     res.json({
-      flightInfor: flightInfor,
+      ...flightInfo,
     });
   })
 );
@@ -63,7 +63,8 @@ router.post(
   '/create-flight',
   asyncHandler(async function createFlight(req, res) {
     console.log(req.body);
-    let { flightCode,
+    let {
+      flightCode,
       airportFrom,
       airportTo,
       dateStart,
@@ -72,7 +73,8 @@ router.post(
       vipSeats,
       normalSeats,
       vipPrice,
-      normalPrice, } = req.body;
+      normalPrice,
+    } = req.body;
 
     flight
       .createFlight({
