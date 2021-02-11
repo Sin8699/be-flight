@@ -1,4 +1,6 @@
-const Sequelize = require('sequelize');
+// const Sequelize = require('sequelize');
+const { Sequelize } = require('sequelize')
+// const {Sequelize} = Sequelize
 const db = require('../db');
 const Model = Sequelize.Model;
 const User = require('./user');
@@ -15,7 +17,7 @@ class HistorySale extends Model {
     });
   };
 
-  static updateHistorySale = async ({}) => {
+  static updateHistorySale = async ({ }) => {
     return await HistorySale.update(
       {},
       {
@@ -35,8 +37,8 @@ class HistorySale extends Model {
   }
 
   static async getHistorySaleByYear(year) {
-    return await HistorySale.findAll({});
-  }
+    return await HistorySale.findAll();
+}
 }
 
 HistorySale.init(
@@ -64,7 +66,7 @@ HistorySale.init(
     },
 
     dateSale: {
-      type: Sequelize.DATE,
+      type: Sequelize.DATEONLY,
       allowNull: false,
     },
     status: {
