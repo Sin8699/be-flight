@@ -1,6 +1,11 @@
-export const ROLE_USER = {
+const ROLE_USER = {
   GUEST: 'GUEST',
   ADMIN: 'ADMIN',
 };
 
-export const ROLE = [ROLE_USER.ADMIN, ROLE_USER.GUEST];
+const ROLE = [ROLE_USER.ADMIN, ROLE_USER.GUEST];
+
+module.exports = {
+  ROLE,
+  ROLE_USER,
+};
