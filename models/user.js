@@ -59,12 +59,15 @@ class User extends Model {
       where,
     });
   }
-  static createUser = async ({ username, password, email, fullName }) => {
+  static createUser = async ({ username, password, email, fullName, role, accountBalance, numberPhone }) => {
     return await User.create({
       username,
       password: this.hashPassword(password),
       email,
       fullName,
+      numberPhone,
+      accountBalance,
+      role,
     });
   };
 }
@@ -102,13 +105,12 @@ User.init(
 
     role: {
       type: Sequelize.STRING,
-      allowNull: false,
       enum: ['GUEST', 'ADMIN'],
+      defaultValue: 'GUEST',
     },
 
     accountBalance: {
       type: Sequelize.INTEGER,
-      allowNull: false,
       defaultValue: 0,
     },
 
@@ -125,7 +127,6 @@ User.init(
   {
     sequelize: db,
     modelName: 'user',
-    timestamps: true,
   }
 );
 
