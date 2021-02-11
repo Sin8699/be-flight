@@ -1,12 +1,12 @@
 const bcrypt = require('bcrypt');
 const Sequelize = require('sequelize');
 const db = require('../db');
-
+const config = require('../configs');
 const Model = Sequelize.Model;
-
+const { ROLE, ROLE_USER } = require('../constant');
 class User extends Model {
   static hashPassword(pass) {
-    return bcrypt.hashSync(pass, 10);
+    return bcrypt.hashSync(pass, config.saltRounds);
   }
   static verifyPassword(password, hashPassword) {
     return bcrypt.compareSync(password, hashPassword);
@@ -105,8 +105,8 @@ User.init(
 
     role: {
       type: Sequelize.STRING,
-      enum: ['GUEST', 'ADMIN'],
-      defaultValue: 'GUEST',
+      enum: ROLE,
+      defaultValue: ROLE_USER.GUEST,
     },
 
     accountBalance: {
