@@ -6,6 +6,26 @@ const jwt = require('jsonwebtoken');
 const sendMail = require('../models/email');
 const crypto = require('crypto');
 const configs = require('../configs');
+const Sequelize = require('sequelize');
+const Op = Sequelize.Op;
+
+router.get('/', passport.authenticate('jwt', { session: false }), async (req, res) => {
+  const stateUser = _.get(req, 'user.dataValues');
+  console.log('stateUser', stateUser);
+
+  try {
+    const user = await User.getUser({ id: stateUser.id });
+    return res.json({
+      message: 'Get info user successfully',
+      ..._.pick(user, ['fullName', 'email', 'numberPhone', 'accountBalance']),
+    });
+  } catch (err) {
+    console.log(err);
+    return res.status(401).json({
+      message: 'User not found',
+    });
+  }
+});
 
 router.post('/login', async function (req, res, next) {
   const { email, hashPassword } = req.body;
@@ -108,18 +128,16 @@ router.post('/forgot-password', async (req, res) => {
 router.post('/reset-password/:token', async (req, res) => {
   const token = req.params.token;
 
-  const user = await User.findUserByQuery({
+  const user = await User.getUser({
     resetPasswordToken: token,
     resetPasswordExpireTime: {
-      $gt: new Date(),
+      [Op.gt]: new Date(),
     },
   });
 
-  console.log('user', user);
-
   if (!user) {
     return res.status(400).send({
-      message: 'User not found',
+      message: 'Your token has expired',
     });
   }
 
@@ -133,8 +151,8 @@ router.post('/reset-password/:token', async (req, res) => {
     resetPasswordExpireTime: null,
   });
 
-  return res.status(400).send({
-    message: 'Check your email to reset password',
+  return res.json({
+    message: 'Reset password success',
   });
 });
 
