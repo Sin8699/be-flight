@@ -17,11 +17,17 @@ class HistorySale extends Model {
     });
   };
 
-  static updateHistorySale = async ({ }) => {
-    return await HistorySale.update(
-      {},
+  static updateStatusHistorySale = async ({ userID, flightCode, status }) => {
+    return await HistorySale.update({
+      status: status,
+    },
       {
-        where: {},
+        where:
+        {
+          
+          flightCode: flightCode,
+          userID: userID
+        }
       }
     );
   };
@@ -38,7 +44,7 @@ class HistorySale extends Model {
 
   static async getHistorySaleByYear(year) {
     return await HistorySale.findAll();
-}
+  }
 }
 
 HistorySale.init(

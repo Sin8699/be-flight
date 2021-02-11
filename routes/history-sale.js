@@ -79,15 +79,30 @@ router.post("/create-sale", asyncHandler(async function createSale(req, res) {
         dateSale,
         status
     })
+        .then(async () => {
+            res.json({ message: "historySale created successfully" });
+        })
+        .catch((err) => {
+            res.json({
+                error: "Error when create historySale.",
+                err: err
+            });
+        });
+}));
+
+router.post('/update-status-sale', asyncHandler(async function updateStatusSale(req, res) {
+    const { userID, flightCode, status } = req.query
+    await historySale.updateStatusHistorySale({ userID, flightCode, status })
     .then(async () => {
-        res.json({ message: "historySale created successfully" });
+        res.json({ message: "historySale update status successfully" });
     })
     .catch((err) => {
         res.json({
-            error: "Error when create historySale.",
+            error: "Error when update status historySale.",
             err: err
         });
     });
 }));
+
 
 module.exports = router;
