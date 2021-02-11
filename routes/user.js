@@ -11,7 +11,6 @@ const HelperUser = require('../helpers/user');
 
 router.get('/', passport.authenticate('jwt', { session: false }), async (req, res) => {
   const stateUser = _.get(req, 'user.dataValues');
-  console.log('stateUser', stateUser);
 
   try {
     const user = await User.getUser({ id: stateUser.id });

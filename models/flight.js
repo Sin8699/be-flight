@@ -9,10 +9,31 @@ class Flight extends Model {
     return Flight.findAll();
   }
 
+  static async getAllFlightYetDepart() {
+    return Flight.findAll({
+      where: {
+        dateStart: {
+          [Op.gt]: new Date(),
+        },
+      },
+    });
+  }
+
   static async getFlightByFlightCode(flightCode) {
     return Flight.findOne({
       where: {
         flightCode: flightCode,
+      },
+    });
+  }
+
+  static async getFlightByFlightCodeYetDepart(flightCode) {
+    return Flight.findOne({
+      where: {
+        flightCode: flightCode,
+        dateStart: {
+          [Op.gt]: new Date(),
+        },
       },
     });
   }

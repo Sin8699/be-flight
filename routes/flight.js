@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const asyncHandler = require('express-async-handler');
 const flight = require('../models/flight');
+const { ROLE_USER } = require('../constant');
 
 router.get(
   '/create-data',
@@ -38,26 +39,52 @@ router.get(
   })
 );
 
-router.get(
-  '/',
-  asyncHandler(async function getListFlight(req, res) {
-    const listFlight = await flight.getAllFlight();
-    res.json({
-      listFlight: listFlight,
-    });
-  })
-);
+router.get('/', passport.authenticate('jwt', { session: false }), async (req, res) => {
+  const stateUser = _.get(req, 'user.dataValues');
 
-router.get(
-  '/:flightCode',
-  asyncHandler(async function getFlight(req, res) {
-    const { flightCode } = req.params;
-    const flightInfo = await flight.getFlightByFlightCode(flightCode);
+  try {
+    if (stateUser.role === ROLE_USER.ADMIN) {
+      const listFlight = await flight.getAllFlight();
+      return res.json({
+        ...listFlight,
+      });
+    }
+
+    const listFlight = await flight.getAllFlightYetDepart();
     res.json({
-      ...flightInfo,
+      ...listFlight,
     });
-  })
-);
+  } catch (error) {
+    console.log(err);
+    return res.status(401).json({
+      message: 'Something not right',
+    });
+  }
+});
+
+router.get('/:flightCode', passport.authenticate('jwt', { session: false }), async (req, res) => {
+  const stateUser = _.get(req, 'user.dataValues');
+  const { flightCode } = req.params;
+
+  try {
+    if (stateUser.role === ROLE_USER.ADMIN) {
+      const listFlight = await flight.getFlightByFlightCode(flightCode);
+      return res.json({
+        ...listFlight,
+      });
+    }
+
+    const listFlight = await flight.getFlightByFlightCodeYetDepart(flightCode);
+    res.json({
+      ...listFlight,
+    });
+  } catch (error) {
+    console.log(err);
+    return res.status(401).json({
+      message: 'Flight not found',
+    });
+  }
+});
 
 router.post(
   '/create-flight',
