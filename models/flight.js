@@ -19,18 +19,18 @@ class Flight extends Model {
     });
   }
 
-  static async getFlightByFlightCode(flightCode) {
+  static async getFlightByFlightCode(id) {
     return Flight.findOne({
       where: {
-        flightCode: flightCode,
+        id,
       },
     });
   }
 
-  static async getFlightByFlightCodeYetDepart(flightCode) {
+  static async getFlightByFlightCodeYetDepart(id) {
     return Flight.findOne({
       where: {
-        flightCode: flightCode,
+        id,
         dateStart: {
           [Op.gt]: new Date(),
         },
@@ -39,7 +39,6 @@ class Flight extends Model {
   }
 
   static createFlight = async ({
-    flightCode,
     airportFrom,
     airportTo,
     dateStart,
@@ -51,7 +50,6 @@ class Flight extends Model {
     normalPrice,
   }) => {
     return await Flight.create({
-      flightCode,
       airportFrom,
       airportTo,
       dateStart,
@@ -65,7 +63,6 @@ class Flight extends Model {
   };
 
   static updateFlight = async ({
-    flightCode,
     airportFrom,
     airportTo,
     dateStart,
@@ -89,7 +86,7 @@ class Flight extends Model {
         normalPrice: normalPrice,
       },
       {
-        where: { flightCode: flightCode },
+        where: { id: flightCode },
       }
     );
   };
@@ -97,10 +94,10 @@ class Flight extends Model {
 
 Flight.init(
   {
-    flightCode: {
-      type: Sequelize.STRING,
-      allowNull: false,
-      unique: true,
+    id: {
+      type: Sequelize.INTEGER,
+      autoIncrement: true,
+      primaryKey: true,
     },
 
     airportFrom: {

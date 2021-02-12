@@ -22,7 +22,6 @@ router.get(
       const normalPrice = 1000;
 
       await flight.createFlight({
-        flightCode,
         airportFrom,
         airportTo,
         dateStart,
@@ -91,7 +90,6 @@ router.post('/create-flight', passport.authenticate('jwt', { session: false }), 
   if (stateUser.role !== ROLE_USER.ADMIN) return res.status(403).json({ message: 'Forbidden' });
 
   const {
-    flightCode,
     airportFrom,
     airportTo,
     dateStart,
@@ -105,7 +103,6 @@ router.post('/create-flight', passport.authenticate('jwt', { session: false }), 
 
   flight
     .createFlight({
-      flightCode,
       airportFrom,
       airportTo,
       dateStart,
@@ -132,7 +129,6 @@ router.post('/update-flight', passport.authenticate('jwt', { session: false }), 
   if (stateUser.role !== ROLE_USER.ADMIN) return res.status(403).json({ message: 'Forbidden' });
 
   const {
-    flightCode,
     airportFrom,
     airportTo,
     dateStart,
@@ -155,7 +151,6 @@ router.post('/update-flight', passport.authenticate('jwt', { session: false }), 
 
   flight
     .updateFlight({
-      flightCode,
       airportFrom,
       airportTo,
       dateStart,
