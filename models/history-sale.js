@@ -5,6 +5,7 @@ const db = require('../db');
 const Model = Sequelize.Model;
 const User = require('./user');
 const Flight = require('./flight');
+const configTimestamps = require('../configs/timestamps');
 
 class HistorySale extends Model {
   static createHistorySale = async ({ userID, flightCode, typeSeat, dateSale, status }) => {
@@ -75,6 +76,8 @@ HistorySale.init(
       type: Sequelize.BOOLEAN,
       allowNull: true,
     },
+
+    ...configTimestamps,
   },
   {
     sequelize: db,

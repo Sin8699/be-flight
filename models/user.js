@@ -4,6 +4,8 @@ const db = require('../db');
 const config = require('../configs');
 const Model = Sequelize.Model;
 const { ROLE, ROLE_USER } = require('../constant');
+const configTimestamps = require('../configs/timestamps');
+
 class User extends Model {
   static hashPassword(pass) {
     return bcrypt.hashSync(pass, config.saltRounds);
@@ -123,6 +125,8 @@ User.init(
       type: Sequelize.DATE,
       defaultValue: null,
     },
+
+    ...configTimestamps,
   },
   {
     sequelize: db,

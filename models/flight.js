@@ -1,6 +1,7 @@
 const Sequelize = require('sequelize');
 const Airport = require('./airport');
 const db = require('../db');
+const configTimestamps = require('../configs/timestamps');
 
 const Model = Sequelize.Model;
 
@@ -121,7 +122,8 @@ Flight.init(
     goingTime: {
       type: Sequelize.TIME,
       allowNull: false,
-      defaultValue: '00:30',
+      // validate: { min: '00:30' },
+      // defaultValue: '00:30',
     },
 
     status: {
@@ -148,6 +150,8 @@ Flight.init(
       type: Sequelize.INTEGER,
       defaultValue: 0,
     },
+
+    ...configTimestamps,
   },
   {
     sequelize: db,
