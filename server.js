@@ -6,9 +6,12 @@ const passport = require('passport');
 const db = require('./db');
 const PORT = process.env.PORT || 3000;
 
+const expressSession = require('express-session');
 require('express-async-errors');
 
 const app = express();
+
+app.use(expressSession({ secret: 'keyboard cat' }));
 app.use(express.static('public'));
 app.use(cors());
 app.use(express.json());
@@ -18,21 +21,20 @@ app.use(
   })
 );
 
+// // middlewares
+app.use(passport.initialize());
+app.use(passport.session());
+require('./middlewares/passport')(passport);
+
 app.get('/', (req, res) => {
   res.send('HI GUY');
 });
 
-// // middlewares
-app.use(passport.initialize());
-require('./middlewares/passport')(passport);
-
-// app.get('/', passport.authenticate('jwt', { session: false }), async (req, res) => {
-//   res.json({
-//     user: req.user,
-//   });
-// });
-
 app.use('/user', require('./routes/user'));
+
+//auth.
+app.use(passport.authenticate('jwt', { session: false }));
+
 app.use('/airport', require('./routes/airport'));
 app.use('/flight', require('./routes/flight'));
 app.use('/middle-airport', require('./routes/middle-airport'));

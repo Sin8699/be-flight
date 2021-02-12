@@ -3,6 +3,8 @@ const asyncHandler = require('express-async-handler');
 const flight = require('../models/flight');
 const { ROLE_USER } = require('../constant');
 const passport = require('passport');
+const requireRole = require('../middlewares/require-role');
+const _ = require('lodash');
 
 router.get(
   '/create-data',
@@ -85,7 +87,7 @@ router.get('/:flightCode', passport.authenticate('jwt', { session: false }), asy
   }
 });
 
-router.post('/create-flight', passport.authenticate('jwt', { session: false }), async (req, res) => {
+router.post('/create-flight', requireRole([ROLE_USER.ADMIN]), async (req, res) => {
   const stateUser = _.get(req, 'user.dataValues');
   if (stateUser.role !== ROLE_USER.ADMIN) return res.status(403).json({ message: 'Forbidden' });
 
