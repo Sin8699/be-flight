@@ -1,5 +1,5 @@
 // const Sequelize = require('sequelize');
-const { Sequelize } = require('sequelize')
+const { Sequelize } = require('sequelize');
 // const {Sequelize} = Sequelize
 const db = require('../db');
 const Model = Sequelize.Model;
@@ -18,16 +18,15 @@ class HistorySale extends Model {
   };
 
   static updateStatusHistorySale = async ({ userID, flightCode, status }) => {
-    return await HistorySale.update({
-      status: status,
-    },
+    return await HistorySale.update(
       {
-        where:
-        {
-          
+        status: status,
+      },
+      {
+        where: {
           flightCode: flightCode,
-          userID: userID
-        }
+          userID: userID,
+        },
       }
     );
   };
@@ -54,6 +53,7 @@ HistorySale.init(
       autoIncrement: true,
       primaryKey: true,
     },
+
     userID: {
       type: Sequelize.STRING,
       BelongsTo: User,
@@ -71,10 +71,6 @@ HistorySale.init(
       allowNull: false,
     },
 
-    dateSale: {
-      type: Sequelize.DATEONLY,
-      allowNull: false,
-    },
     status: {
       type: Sequelize.BOOLEAN,
       allowNull: true,
