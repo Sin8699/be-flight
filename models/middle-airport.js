@@ -59,6 +59,11 @@ MiddleAirport.init(
       type: Sequelize.TIME,
     },
 
+    order: {
+      type: Sequelize.INTEGER,
+      allowNull: false,
+    },
+
     ...configTimestamps,
   },
   {
