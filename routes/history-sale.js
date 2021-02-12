@@ -117,39 +117,4 @@ router.post(
   })
 );
 
-router.post('/buy-sticky', passport.authenticate('jwt', { session: false }), async (req, res) => {
-  let { userID, flightCode, typeSeat, dateSale, status } = req.query;
-
-  const flightSale = await flight.getFlightByFlightCode(flightCode);
-  if (flightSale == null) {
-    res.json({
-      error: "flight don't exist",
-    });
-  }
-  if (typeSeat == TYPE_SEAT.VIP) {
-    flightSale.vipSeats -= 1;
-  }
-  if (typeSeat == TYPE_SEAT.NORMAL) {
-    flightSale.normalSeats -= 1;
-  }
-  flightSale.save();
-  historySale
-    .createHistorySale({
-      userID,
-      flightCode,
-      typeSeat,
-      dateSale,
-      status,
-    })
-    .then(async () => {
-      res.json({ message: 'historySale created successfully' });
-    })
-    .catch((err) => {
-      res.json({
-        error: 'Error when create historySale.',
-        err: err,
-      });
-    });
-});
-
 module.exports = router;
