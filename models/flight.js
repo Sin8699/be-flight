@@ -126,10 +126,10 @@ Flight.init(
       // defaultValue: '00:30',
     },
 
-    status: {
-      type: Sequelize.STRING,
-      defaultValue: 'Ready',
-    },
+    // status: {
+    //   type: Sequelize.STRING,
+    //   defaultValue: 'Ready',
+    // },
 
     vipSeats: {
       type: Sequelize.INTEGER,
