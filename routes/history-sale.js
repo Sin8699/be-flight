@@ -104,5 +104,19 @@ router.post('/update-status-sale', asyncHandler(async function updateStatusSale(
     });
 }));
 
+router.post('/update-type-seat', asyncHandler(async function updateStatusSale(req, res) {
+    const { userID, flightCode, typeSeat } = req.query
+    
+    await historySale.updatetypeSeatHistorySale({ userID, flightCode, typeSeat })
+    .then(async () => {
+        res.json({ message: "historySale type seat status successfully" });
+    })
+    .catch((err) => {
+        res.json({
+            error: "Error when update type seat historySale.",
+            err: err
+        });
+    });
+}));
 
 module.exports = router;

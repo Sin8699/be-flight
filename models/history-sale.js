@@ -17,6 +17,21 @@ class HistorySale extends Model {
     });
   };
 
+  static updatetypeSeatHistorySale = async ({ userID, flightCode, typeSeat }) => {
+    return await HistorySale.update({
+      typeSeat: typeSeat,
+    },
+      {
+        where:
+        {
+          
+          flightCode: flightCode,
+          userID: userID
+        }
+      }
+    );
+  };
+
   static updateStatusHistorySale = async ({ userID, flightCode, status }) => {
     return await HistorySale.update({
       status: status,
@@ -31,7 +46,7 @@ class HistorySale extends Model {
       }
     );
   };
-
+  
   static async getAllSale() {
     return HistorySale.findAll();
   }
@@ -45,6 +60,7 @@ class HistorySale extends Model {
   static async getHistorySaleByYear(year) {
     return await HistorySale.findAll();
   }
+
 }
 
 HistorySale.init(
