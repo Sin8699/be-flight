@@ -16,7 +16,12 @@ router.get(
       const airportFrom = 'A ' + index.toString();
       const airportTo = 'A ' + index1.toString();
       const dateStart = Date.now();
-      const goingTime = '22:00';
+
+      var today = new Date();
+      today.setHours(today.getHours() + 4);
+
+      let dateEnd = new Date(today);
+
       const status = 'Ready';
       const vipSeats = 20;
       const normalSeats = 30;
@@ -32,7 +37,7 @@ router.get(
         normalSeats,
         vipPrice,
         normalPrice,
-        goingTime,
+        dateEnd,
       });
     }
     res.json({
@@ -89,24 +94,14 @@ router.get('/:flightCode', passport.authenticate('jwt', { session: false }), asy
 });
 
 router.post('/create-flight', requireRole(ROLE_USER.ADMIN), async (req, res) => {
-  const {
-    airportFrom,
-    airportTo,
-    dateStart,
-    goingTime,
-    status,
-    vipSeats,
-    normalSeats,
-    vipPrice,
-    normalPrice,
-  } = req.body;
+  const { airportFrom, airportTo, dateStart, dateEnd, status, vipSeats, normalSeats, vipPrice, normalPrice } = req.body;
 
   flight
     .createFlight({
       airportFrom,
       airportTo,
       dateStart,
-      goingTime,
+      dateEnd,
       status,
       vipSeats,
       normalSeats,
@@ -125,20 +120,10 @@ router.post('/create-flight', requireRole(ROLE_USER.ADMIN), async (req, res) => 
 });
 
 router.post('/update-flight', requireRole(ROLE_USER.ADMIN), async (req, res) => {
-  const {
-    airportFrom,
-    airportTo,
-    dateStart,
-    goingTime,
-    status,
-    vipSeats,
-    normalSeats,
-    vipPrice,
-    normalPrice,
-  } = req.body;
+  const { airportFrom, airportTo, dateStart, dateEnd, status, vipSeats, normalSeats, vipPrice, normalPrice } = req.body;
 
-  goingTime = goingTime;
-  console.log(goingTime);
+  dateEnd = dateEnd;
+  console.log(dateEnd);
   dateStart = dateStart;
   console.log(dateStart);
   vipSeats = parseInt(vipSeats);
@@ -151,7 +136,7 @@ router.post('/update-flight', requireRole(ROLE_USER.ADMIN), async (req, res) => 
       airportFrom,
       airportTo,
       dateStart,
-      goingTime,
+      dateEnd,
       status,
       vipSeats,
       normalSeats,

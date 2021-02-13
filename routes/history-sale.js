@@ -2,8 +2,8 @@ const router = require('express').Router();
 const historySale = require('../models/history-sale');
 const flight = require('../models/flight');
 const asyncHandler = require('express-async-handler');
-const { TYPE_SEAT, ROLE_USER } = require('../constant');
-const requireRole = require('../middlewares/require-role');
+const { TYPE_SEAT } = require('../constant');
+const config = require('../configs');
 
 router.get(
   '/',
@@ -58,8 +58,15 @@ router.post(
 
     const flightSale = await flight.getFlightByFlightCode(flightCode);
     if (!flightSale) {
-      res.json({
+      return res.status(401).json({
         error: "Flight don't exist",
+      });
+    }
+
+    const currentDate = new Date();
+    if (new Date(flightSale.dateStart - currentDate).getDate() < config.bookedBeforeDay) {
+      return res.status(401).json({
+        error: `Tickets must be booked ${config.bookedBeforeDay} day before take off`,
       });
     }
 
