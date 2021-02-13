@@ -87,10 +87,7 @@ router.get('/:flightCode', passport.authenticate('jwt', { session: false }), asy
   }
 });
 
-router.post('/create-flight', requireRole([ROLE_USER.ADMIN]), async (req, res) => {
-  const stateUser = _.get(req, 'user.dataValues');
-  if (stateUser.role !== ROLE_USER.ADMIN) return res.status(403).json({ message: 'Forbidden' });
-
+router.post('/create-flight', requireRole(ROLE_USER.ADMIN), async (req, res) => {
   const {
     airportFrom,
     airportTo,
@@ -126,10 +123,7 @@ router.post('/create-flight', requireRole([ROLE_USER.ADMIN]), async (req, res) =
     });
 });
 
-router.post('/update-flight', passport.authenticate('jwt', { session: false }), async (req, res) => {
-  const stateUser = _.get(req, 'user.dataValues');
-  if (stateUser.role !== ROLE_USER.ADMIN) return res.status(403).json({ message: 'Forbidden' });
-
+router.post('/update-flight', requireRole(ROLE_USER.ADMIN), async (req, res) => {
   const {
     airportFrom,
     airportTo,
