@@ -16,7 +16,7 @@ router.get(
       const airportFrom = 'A ' + index.toString();
       const airportTo = 'A ' + index1.toString();
       const dateStart = Date.now();
-      const goingTime = '15:30:00';
+      const goingTime = '30:00';
       const status = 'Ready';
       const vipSeats = 20;
       const normalSeats = 30;
@@ -32,6 +32,7 @@ router.get(
         normalSeats,
         vipPrice,
         normalPrice,
+        goingTime,
       });
     }
     res.json({
