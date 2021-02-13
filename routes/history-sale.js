@@ -64,7 +64,7 @@ router.get(
 router.post(
   '/create-sale',
   asyncHandler(async function createSale(req, res) {
-    const { userID, flightCode, typeSeat, dateSale, status } = req.query;
+    const { userID, flightCode, typeSeat, dateSale, status } = req.body;
 
     const flightSale = await flight.getFlightByFlightCode(flightCode);
     if (flightSale == null) {
@@ -102,7 +102,7 @@ router.post(
 router.post(
   '/update-status-sale',
   asyncHandler(async function updateStatusSale(req, res) {
-    const { userID, flightCode, status } = req.query;
+    const { userID, flightCode, status } = req.body;
     await historySale
       .updateStatusHistorySale({ userID, flightCode, status })
       .then(async () => {
