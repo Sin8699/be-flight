@@ -1,12 +1,14 @@
 const bcrypt = require('bcrypt');
 const Sequelize = require('sequelize');
 const db = require('../db');
-
+const config = require('../configs');
 const Model = Sequelize.Model;
+const { ROLE, ROLE_USER } = require('../constant');
+const configTimestamps = require('../configs/timestamps');
 
 class User extends Model {
   static hashPassword(pass) {
-    return bcrypt.hashSync(pass, 10);
+    return bcrypt.hashSync(pass, config.saltRounds);
   }
   static verifyPassword(password, hashPassword) {
     return bcrypt.compareSync(password, hashPassword);
@@ -59,12 +61,15 @@ class User extends Model {
       where,
     });
   }
-  static createUser = async ({ username, password, email, fullName }) => {
+  static createUser = async ({ username, password, email, fullName, role, accountBalance, numberPhone }) => {
     return await User.create({
       username,
       password: this.hashPassword(password),
       email,
       fullName,
+      numberPhone,
+      accountBalance,
+      role,
     });
   };
 }
@@ -102,13 +107,12 @@ User.init(
 
     role: {
       type: Sequelize.STRING,
-      allowNull: false,
-      enum: ['GUEST', 'ADMIN'],
+      enum: ROLE,
+      defaultValue: ROLE_USER.GUEST,
     },
 
     accountBalance: {
       type: Sequelize.INTEGER,
-      allowNull: false,
       defaultValue: 0,
     },
 
@@ -121,11 +125,12 @@ User.init(
       type: Sequelize.DATE,
       defaultValue: null,
     },
+
+    ...configTimestamps,
   },
   {
     sequelize: db,
     modelName: 'user',
-    timestamps: true,
   }
 );
 

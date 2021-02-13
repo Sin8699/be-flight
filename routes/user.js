@@ -2,10 +2,29 @@ const router = require('express').Router();
 const User = require('../models/user');
 const passport = require('passport');
 const _ = require('lodash');
-const jwt = require('jsonwebtoken');
-const sendMail = require('../models/email');
+const sendMail = require('../helpers/email');
 const crypto = require('crypto');
 const configs = require('../configs');
+const Sequelize = require('sequelize');
+const Op = Sequelize.Op;
+const HelperUser = require('../helpers/user');
+
+router.get('/', passport.authenticate('jwt', { session: false }), async (req, res) => {
+  const stateUser = _.get(req, 'user.dataValues');
+
+  try {
+    const user = await User.getUser({ id: stateUser.id });
+    return res.json({
+      message: 'Get info user successfully',
+      ..._.pick(user, ['fullName', 'email', 'numberPhone', 'accountBalance', 'role']),
+    });
+  } catch (err) {
+    console.log(err);
+    return res.status(401).json({
+      message: 'User not found',
+    });
+  }
+});
 
 router.post('/login', async function (req, res, next) {
   const { email, hashPassword } = req.body;
@@ -20,11 +39,7 @@ router.post('/login', async function (req, res, next) {
   }
 
   if (User.verifyPassword(hashPassword, user.password)) {
-    let payload = { id: user.id, role: user.role };
-    let token = jwt.sign(payload, process.env.JWT_SECRET, {
-      issuer: process.env.JWT_ISSUER || '',
-      expiresIn: '10h',
-    });
+    const token = HelperUser.generalToken(user);
     res.json({
       code: 0,
       message: 'Login successful',
@@ -37,7 +52,7 @@ router.post('/login', async function (req, res, next) {
 });
 
 router.post('/register', function (req, res, next) {
-  const { username, password, email, fullName, numberPhone } = req.body;
+  const { username, password, email, fullName, numberPhone, role, accountBalance } = req.body;
   User.createUser({
     username,
     password,
@@ -45,11 +60,15 @@ router.post('/register', function (req, res, next) {
     fullName,
     numberPhone,
     role,
+    accountBalance,
   })
-    .then(async () => {
-      res.json({ message: 'User created successfully' });
+    .then(async (user) => {
+      const token = HelperUser.generalToken(user);
+
+      res.json({ message: 'User created successfully', token });
     })
     .catch((err) => {
+      console.log('err', err);
       res.status(401).json({
         error: 'Error when create account.',
       });
@@ -108,18 +127,16 @@ router.post('/forgot-password', async (req, res) => {
 router.post('/reset-password/:token', async (req, res) => {
   const token = req.params.token;
 
-  const user = await User.findUserByQuery({
+  const user = await User.getUser({
     resetPasswordToken: token,
     resetPasswordExpireTime: {
-      $gt: new Date(),
+      [Op.gt]: new Date(),
     },
   });
 
-  console.log('user', user);
-
   if (!user) {
     return res.status(400).send({
-      message: 'User not found',
+      message: 'Your token has expired',
     });
   }
 
@@ -133,14 +150,13 @@ router.post('/reset-password/:token', async (req, res) => {
     resetPasswordExpireTime: null,
   });
 
-  return res.status(400).send({
-    message: 'Check your email to reset password',
+  return res.json({
+    message: 'Reset password success',
   });
 });
 
 router.put('/update-user', passport.authenticate('jwt', { session: false }), async (req, res) => {
   const stateUser = _.get(req, 'user.dataValues');
-  console.log('stateUser', stateUser);
   if (stateUser.role !== 'ADMIN') {
     return res.status(403).send({
       error: 'Forbidden',

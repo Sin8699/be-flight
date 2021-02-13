@@ -1,10 +1,11 @@
 // const Sequelize = require('sequelize');
-const { Sequelize } = require('sequelize')
+const { Sequelize } = require('sequelize');
 // const {Sequelize} = Sequelize
 const db = require('../db');
 const Model = Sequelize.Model;
 const User = require('./user');
 const Flight = require('./flight');
+const configTimestamps = require('../configs/timestamps');
 
 class HistorySale extends Model {
   static createHistorySale = async ({ userID, flightCode, typeSeat, dateSale, status }) => {
@@ -33,16 +34,15 @@ class HistorySale extends Model {
   };
 
   static updateStatusHistorySale = async ({ userID, flightCode, status }) => {
-    return await HistorySale.update({
-      status: status,
-    },
+    return await HistorySale.update(
       {
-        where:
-        {
-          
+        status: status,
+      },
+      {
+        where: {
           flightCode: flightCode,
-          userID: userID
-        }
+          userID: userID,
+        },
       }
     );
   };
@@ -70,6 +70,7 @@ HistorySale.init(
       autoIncrement: true,
       primaryKey: true,
     },
+
     userID: {
       type: Sequelize.STRING,
       BelongsTo: User,
@@ -87,14 +88,12 @@ HistorySale.init(
       allowNull: false,
     },
 
-    dateSale: {
-      type: Sequelize.DATEONLY,
-      allowNull: false,
-    },
     status: {
       type: Sequelize.BOOLEAN,
       allowNull: true,
     },
+
+    ...configTimestamps,
   },
   {
     sequelize: db,

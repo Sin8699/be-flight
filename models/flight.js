@@ -1,6 +1,7 @@
 const Sequelize = require('sequelize');
 const Airport = require('./airport');
 const db = require('../db');
+const configTimestamps = require('../configs/timestamps');
 
 const Model = Sequelize.Model;
 
@@ -9,16 +10,36 @@ class Flight extends Model {
     return Flight.findAll();
   }
 
-  static async getFlightByFlightCode(flightCode) {
+  static async getAllFlightYetDepart() {
+    return Flight.findAll({
+      where: {
+        dateStart: {
+          [Op.gt]: new Date(),
+        },
+      },
+    });
+  }
+
+  static async getFlightByFlightCode(id) {
     return Flight.findOne({
       where: {
-        flightCode: flightCode,
+        id,
+      },
+    });
+  }
+
+  static async getFlightByFlightCodeYetDepart(id) {
+    return Flight.findOne({
+      where: {
+        id,
+        dateStart: {
+          [Op.gt]: new Date(),
+        },
       },
     });
   }
 
   static createFlight = async ({
-    flightCode,
     airportFrom,
     airportTo,
     dateStart,
@@ -30,7 +51,6 @@ class Flight extends Model {
     normalPrice,
   }) => {
     return await Flight.create({
-      flightCode,
       airportFrom,
       airportTo,
       dateStart,
@@ -44,7 +64,6 @@ class Flight extends Model {
   };
 
   static updateFlight = async ({
-    flightCode,
     airportFrom,
     airportTo,
     dateStart,
@@ -68,7 +87,7 @@ class Flight extends Model {
         normalPrice: normalPrice,
       },
       {
-        where: { flightCode: flightCode },
+        where: { id: flightCode },
       }
     );
   };
@@ -76,10 +95,10 @@ class Flight extends Model {
 
 Flight.init(
   {
-    flightCode: {
-      type: Sequelize.STRING,
-      allowNull: false,
-      unique: true,
+    id: {
+      type: Sequelize.INTEGER,
+      autoIncrement: true,
+      primaryKey: true,
     },
 
     airportFrom: {
@@ -100,15 +119,17 @@ Flight.init(
       allowNull: false,
     },
 
-    timeStart: {
+    goingTime: {
       type: Sequelize.TIME,
       allowNull: false,
+      // validate: { min: '00:30' },
+      // defaultValue: '00:30',
     },
 
-    status: {
-      type: Sequelize.STRING,
-      defaultValue: 'Ready',
-    },
+    // status: {
+    //   type: Sequelize.STRING,
+    //   defaultValue: 'Ready',
+    // },
 
     vipSeats: {
       type: Sequelize.INTEGER,
@@ -129,6 +150,8 @@ Flight.init(
       type: Sequelize.INTEGER,
       defaultValue: 0,
     },
+
+    ...configTimestamps,
   },
   {
     sequelize: db,

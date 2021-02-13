@@ -3,6 +3,7 @@ const Sequelize = require('sequelize');
 const db = require('../db');
 const { sequelize } = require('./user');
 const Model = Sequelize.Model;
+const configTimestamps = require('../configs/timestamps');
 
 class Airport extends Model {
   static async getAllAirport() {
@@ -61,6 +62,8 @@ Airport.init(
       type: Sequelize.STRING,
       allowNull: true,
     },
+
+    ...configTimestamps,
   },
   {
     sequelize: db,
