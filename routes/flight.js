@@ -32,6 +32,7 @@ router.get(
         normalSeats,
         vipPrice,
         normalPrice,
+        goingTime,
       });
     }
     res.json({
