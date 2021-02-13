@@ -64,7 +64,6 @@ router.post('/create-airport',
 router.post('/update-airport',
   asyncHandler(async function updateAirport(req, res) {
     const { name, airportCode, address } = req.body;
-    console.log(name);
     airport
       .updateAirport({
         name,

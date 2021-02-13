@@ -8,12 +8,12 @@ const Flight = require('./flight');
 const configTimestamps = require('../configs/timestamps');
 
 class HistorySale extends Model {
-  static createHistorySale = async ({ userID, flightCode, typeSeat, dateSale, status }) => {
+  static createHistorySale = async ({ userID, flightCode, typeSeat, numberSeat, status }) => {
     return await HistorySale.create({
       userID,
       flightCode,
       typeSeat,
-      dateSale,
+      numberSeat,
       status,
     });
   };
@@ -25,7 +25,7 @@ class HistorySale extends Model {
       {
         where:
         {
-          
+
           flightCode: flightCode,
           userID: userID
         }
@@ -46,7 +46,7 @@ class HistorySale extends Model {
       }
     );
   };
-  
+
   static async getAllSale() {
     return HistorySale.findAll();
   }
@@ -57,8 +57,10 @@ class HistorySale extends Model {
     });
   }
 
-  static async getHistorySaleByYear(year) {
-    return await HistorySale.findAll();
+  static async getHistorySaleByStatus(status) {
+    return await HistorySale.findAll({
+      where: { status: status },
+    });
   }
 
 }
@@ -85,6 +87,11 @@ HistorySale.init(
 
     typeSeat: {
       type: Sequelize.STRING,
+      allowNull: false,
+    },
+
+    numberSeat: {
+      type: Sequelize.INTEGER,
       allowNull: false,
     },
 

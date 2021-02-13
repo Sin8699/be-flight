@@ -4,8 +4,7 @@ const flight = require('../models/flight');
 const asyncHandler = require('express-async-handler');
 const { TYPE_SEAT } = require('../constant');
 
-router.get(
-  '/',
+router.get('/',
   asyncHandler(async function getListHistorySale(req, res) {
     const listSale = await historySale.getAllSale();
     res.json({
@@ -14,8 +13,7 @@ router.get(
   })
 );
 
-router.get(
-  '/create-data',
+router.get('/create-data',
   asyncHandler(async function (req, res) {
     for (let i = 0; i < 5; i++) {
       const index = Math.floor(Math.random() * Math.floor(5));
@@ -23,15 +21,15 @@ router.get(
       const userID = 5;
       const flightCode = 'F ' + index.toString();
       const typeSeat = Type[index1];
-      const dateSale = Date.now();
       const status = false;
+      const numberSeat = 1;
 
       const flightSale = await flight.getFlightByFlightCode(flightCode);
       if (typeSeat == TYPE_SEAT.VIP) {
-        flightSale.vipSeats -= 1;
+        flightSale.vipSeats -= numberSeat;
       }
       if (typeSeat == TYPE_SEAT.NORMAL) {
-        flightSale.normalSeats -= 1;
+        flightSale.normalSeats -= numberSeat;
       }
       flightSale.save();
 
@@ -39,7 +37,6 @@ router.get(
         userID,
         flightCode,
         typeSeat,
-        dateSale,
         status,
       });
     }
@@ -49,22 +46,9 @@ router.get(
   })
 );
 
-router.get(
-  '/get-sale/:year',
-  asyncHandler(async function getSaleByYear(req, res) {
-    const { year } = req.params;
-    console.log(year);
-    const listSale = historySale.getHistorySaleByYear(year);
-    res.json({
-      listSale: listSale,
-    });
-  })
-);
-
-router.post(
-  '/create-sale',
+router.post('/create-sale',
   asyncHandler(async function createSale(req, res) {
-    const { userID, flightCode, typeSeat, dateSale, status } = req.body;
+    const { userID, flightCode, typeSeat, numberSeat, status } = req.body;
 
     const flightSale = await flight.getFlightByFlightCode(flightCode);
     if (flightSale == null) {
@@ -84,7 +68,7 @@ router.post(
         userID,
         flightCode,
         typeSeat,
-        dateSale,
+        numberSeat,
         status,
       })
       .then(async () => {
@@ -99,36 +83,70 @@ router.post(
   })
 );
 
-router.post(
-  '/update-status-sale',
+router.post('/update-status-sale',
   asyncHandler(async function updateStatusSale(req, res) {
-    const { userID, flightCode, status } = req.body;
-    await historySale
-      .updateStatusHistorySale({ userID, flightCode, status })
-      .then(async () => {
-        res.json({ message: 'historySale update status successfully' });
-      })
-      .catch((err) => {
-        res.json({
-          error: 'Error when update status historySale.',
-          err: err,
-        });
-    });
-}));
+    const { userID, flightCode, status, typeSeat } = req.query;
+    flight.getFlightByFlightCode(flightCode)
+    if (status == false) {
+      console.log("ready");
+    }
+    if (status == true) {
+      console.log("sale");
+    }
+    else {
+
+    }
+    // await historySale.updateStatusHistorySale({ userID, flightCode, status })
+    //   .then(async () => {
+    //     res.json({ message: 'historySale update status successfully' });
+    //   })
+    //   .catch((err) => {
+    //     res.json({
+    //       error: 'Error when update status historySale.',
+    //       err: err,
+    //     });
+    //   });
+  }));
 
 router.post('/update-type-seat', asyncHandler(async function updateStatusSale(req, res) {
-    const { userID, flightCode, typeSeat } = req.query
-    
-    await historySale.updatetypeSeatHistorySale({ userID, flightCode, typeSeat })
+  const { userID, flightCode, typeSeat } = req.query
+
+  await historySale.updatetypeSeatHistorySale({ userID, flightCode, typeSeat })
     .then(async () => {
-        res.json({ message: "historySale type seat status successfully" });
+      res.json({ message: "historySale type seat status successfully" });
     })
     .catch((err) => {
-        res.json({
-            error: "Error when update type seat historySale.",
-            err: err
-        });
+      res.json({
+        error: "Error when update type seat historySale.",
+        err: err
+      });
     });
 }));
 
+router.get('/get-sale-paid',
+  asyncHandler(async function getListHistorySaleUnpaid(req, res) {
+    const listSalePaid = await historySale.getHistorySaleByStatus(true);
+    res.json({
+      listSalePaid: listSalePaid,
+    });
+  })
+);
+
+router.get('/get-sale-unpaid',
+  asyncHandler(async function getListHistorySaleUnpaid(req, res) {
+    const listSaleUnpaid = await historySale.getHistorySaleByStatus(false);
+    res.json({
+      listSaleUnpaid: listSaleUnpaid,
+    });
+  })
+);
+
+router.get('/get-sale-canceled',
+  asyncHandler(async function getListHistorySaleCanceled(req, res) {
+    const listSaleCanceled = await historySale.getHistorySaleByStatus(null);
+    res.json({
+      listSaleCanceled: listSaleCanceled,
+    });
+  })
+);
 module.exports = router;
