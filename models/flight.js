@@ -12,6 +12,7 @@ class Flight extends Model {
 
   static async getAllFlightYetDepart() {
     return Flight.findAll({
+      raw: true,
       where: {
         dateStart: {
           [Op.gt]: new Date(),
@@ -22,11 +23,21 @@ class Flight extends Model {
 
   static async getFlightByFlightCode(id) {
     return Flight.findOne({
+      raw: true,
       where: {
         id,
         dateStart: {
           [Op.gt]: new Date(),
         },
+      },
+    });
+  }
+
+  static async getFlightByFlightCodeNotCondition(id) {
+    return Flight.findOne({
+      raw: true,
+      where: {
+        id,
       },
     });
   }

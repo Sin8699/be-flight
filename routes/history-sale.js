@@ -61,7 +61,6 @@ router.post(
     const flightSale = await flight.getFlightByFlightCode(flightCode);
     const sale = await historySale.getAllTotalSeatByFlightCode(flightCode);
     const restTicket = restTickets(sale, flightSale);
-    console.log('restTicket', restTicket);
 
     if (!flightSale) {
       return res.status(401).json({
@@ -117,31 +116,32 @@ router.post(
   })
 );
 
-router.post(
-  '/update-status-sale',
-  asyncHandler(async function updateStatusSale(req, res) {
-    const { flightCode, status, typeSeat } = req.query;
+// router.post(
+//   '/update-status-sale',
+//   asyncHandler(async function updateStatusSale(req, res) {
+//     const { flightCode, status, typeSeat } = req.query;
 
-    flight.getFlightByFlightCode(flightCode);
-    if (status == false) {
-      console.log('ready');
-    }
-    if (status == true) {
-      console.log('sale');
-    } else {
-    }
-    // await historySale.updateStatusHistorySale({ userID, flightCode, status })
-    //   .then(async () => {
-    //     res.json({ message: 'historySale update status successfully' });
-    //   })
-    //   .catch((err) => {
-    //     res.json({
-    //       error: 'Error when update status historySale.',
-    //       err: err,
-    //     });
-    //   });
-  })
-);
+//     flight.getFlightByFlightCode(flightCode);
+//     if (status == false) {
+//       console.log('ready');
+//     }
+//     if (status == true) {
+//       console.log('sale');
+//     } else {
+//     }
+//     await historySale
+//       .updateStatusHistorySale({ userID, flightCode, status })
+//       .then(async () => {
+//         res.json({ message: 'historySale update status successfully' });
+//       })
+//       .catch((err) => {
+//         res.json({
+//           error: 'Error when update status historySale.',
+//           err: err,
+//         });
+//       });
+//   })
+// );
 
 router.post(
   '/update-type-seat',
@@ -178,15 +178,40 @@ router.get(
   '/get-sale-unpaid',
   asyncHandler(async function getListHistorySaleUnpaid(req, res) {
     const listSaleUnpaid = await historySale.getHistorySaleByStatus(false);
+    const stateUser = _.get(req, 'user.dataValues');
+    const userID = stateUser.id;
 
-    listSaleUnpaid.forEach(async (item) => {
-      const flight = await flight.getFlightByFlightCode(item.flightCode);
+    let listCancel = [];
 
-      if (isCancelTicket(flight.dateStart)) {
+    //cant get flight by code === cant book ticket === cancel tickets booked after
+    await Promise.all((listSaleUnpaid || []).map((item) => flight.getFlightByFlightCode(item.flightCode))).then(
+      (values) => {
+        listSaleUnpaid.forEach((itemSale, i) => {
+          if (!values[i]) {
+            listCancel.push(itemSale);
+          }
+        });
+      },
+      (reason) => {
+        console.log('reason', reason);
       }
-    });
+    );
+
+    await Promise.all(
+      (listCancel || []).map((item) =>
+        historySale.updateStatusHistorySale({ userID, flightCode: item.flightCode, status: null })
+      )
+    ).then(
+      () => {
+        console.log('update history for ticket booked after success');
+      },
+      (reason) => {
+        console.log('reason', reason);
+      }
+    );
+
     res.json({
-      listSaleUnpaid: listSaleUnpaid,
+      listSaleUnpaid: _.differenceBy(listSaleUnpaid, listCancel, 'id'),
     });
   })
 );

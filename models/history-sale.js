@@ -63,12 +63,14 @@ class HistorySale extends Model {
 
   static async getHistorySaleByUser(userID) {
     return await HistorySale.findOne({
+      raw: true,
       where: { userID: userID },
     });
   }
 
   static async getHistorySaleByStatus(status) {
     return await HistorySale.findAll({
+      raw: true,
       where: { status: status },
     });
   }
