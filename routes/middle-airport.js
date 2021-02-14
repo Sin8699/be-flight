@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const middleAirport = require('../models/middle-airport');
+const flight = require('../models/flight');
 const asyncHandler = require('express-async-handler');
 const requireRole = require('../middlewares/require-role');
 const { ROLE_USER } = require('../constant');
@@ -71,6 +72,11 @@ router.post(
       return res.status(401).json({ message: 'Middle airport existed' });
     }
 
+    const flightCheck = await flight.getFlightByFlightCodeNotCondition(flightCode);
+    if (airportCode === flightCheck.airportFrom || airportCode === flightCheck.airportTo) {
+      return res.status(401).json({ message: 'Middle airport is airport From or airport to of this flight' });
+    }
+
     await middleAirport
       .updateMiddleAirport({
         flightCode,
@@ -104,6 +110,11 @@ router.post(
 
     if (checkMiddleAirportIsExisted) {
       return res.status(401).json({ message: 'Middle airport existed' });
+    }
+
+    const flightCheck = await flight.getFlightByFlightCodeNotCondition(flightCode);
+    if (airportCode === flightCheck.airportFrom || airportCode === flightCheck.airportTo) {
+      return res.status(401).json({ message: 'Middle airport is airport From or airport to of this flight' });
     }
 
     await middleAirport
