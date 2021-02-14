@@ -44,7 +44,7 @@ class MiddleAirport extends Model {
 MiddleAirport.init(
   {
     flightCode: {
-      type: Sequelize.STRING,
+      type: Sequelize.INTEGER,
       BelongsTo: Flight,
       allowNull: false,
     },

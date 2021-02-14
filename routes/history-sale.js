@@ -60,7 +60,7 @@ router.post(
 
     const flightSale = await flight.getFlightByFlightCode(flightCode);
     const sale = await historySale.getAllTotalSeatByFlightCode(flightCode);
-    const restTicket = restTickets(sale);
+    const restTicket = restTickets(sale, flightSale);
     console.log('restTicket', restTicket);
 
     if (!flightSale) {
@@ -77,6 +77,7 @@ router.post(
 
     try {
       if (!!vipSeats) {
+        console.log('vipSeats', vipSeats);
         if (restTicket.vipSeats >= vipSeats) {
           await historySale.createHistorySale({
             userID,

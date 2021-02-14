@@ -53,7 +53,7 @@ class HistorySale extends Model {
   static async getAllTotalSeatByFlightCode(flightCode) {
     return HistorySale.findAll({
       where: {
-        flightCode: `${flightCode}`,
+        flightCode,
       },
       raw: true,
       attributes: ['typeSeat', [Sequelize.fn('sum', Sequelize.col('numberSeat')), 'total_seat']],
@@ -89,7 +89,7 @@ HistorySale.init(
     },
 
     flightCode: {
-      type: Sequelize.STRING,
+      type: Sequelize.INTEGER,
       BelongsTo: Flight,
       allowNull: false,
     },

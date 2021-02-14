@@ -16,15 +16,16 @@ const isCancelTicket = (dateStart) => {
   return date1.diff(now, 'hour', true) < 0.1;
 };
 
-const restTickets = (listSale) => {
-  let normalSeats = 0;
-  let vipSeats = 0;
+const restTickets = (listSale, flight) => {
+  let normalSeats = flight.normalSeats;
+  let vipSeats = flight.vipSeats;
+
   listSale.forEach((item) => {
     if (item.typeSeat === TYPE_SEAT.NORMAL) {
-      normalSeats = item.total_seat;
+      normalSeats -= item.total_seat || 0;
     }
     if (item.typeSeat === TYPE_SEAT.VIP) {
-      vipSeats = item.total_seat;
+      vipSeats -= item.total_seat || 0;
     }
   });
 
