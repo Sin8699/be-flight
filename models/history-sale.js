@@ -49,6 +49,12 @@ class HistorySale extends Model {
     return HistorySale.findAll();
   }
 
+  static async getAllSaleByUser(userID) {
+    return HistorySale.findAll({
+      userID: userID,
+    });
+  }
+
   static async getById({ id }) {
     return HistorySale.findOne({
       where: { id },

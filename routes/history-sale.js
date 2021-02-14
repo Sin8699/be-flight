@@ -11,10 +11,19 @@ const _ = require('lodash');
 router.get(
   '/',
   asyncHandler(async function getListHistorySale(req, res) {
-    const listSale = await historySale.getAllSale();
-    res.json({
-      listSale: listSale,
-    });
+    const stateUser = _.get(req, 'user.dataValues');
+
+    if (stateUser.role === ROLE_USER.ADMIN) {
+      const listSale = await historySale.getAllSale();
+      res.json({
+        listSale: listSale,
+      });
+    } else {
+      const listSale = await historySale.getAllSaleByUser(stateUser.id);
+      res.json({
+        listSale: listSale,
+      });
+    }
   })
 );
 
