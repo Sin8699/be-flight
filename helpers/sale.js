@@ -1,6 +1,6 @@
 const config = require('../configs');
 const dayjs = require('dayjs');
-const { TYPE_SEAT } = require('../constant');
+const { TYPE_SEAT, STATUS_TICKET } = require('../constant');
 
 const cantBookTicket = (dateStart) => {
   const now = dayjs();
@@ -14,6 +14,19 @@ const isCancelTicket = (dateStart) => {
   const date1 = dayjs(dateStart);
 
   return date1.diff(now, 'hour', true) < 0.1;
+};
+
+const getStatusTicket = (status) => {
+  switch (status) {
+    case STATUS_TICKET.PAID:
+      return true;
+
+    case STATUS_TICKET.UNPAID:
+      return false;
+
+    default:
+      return null;
+  }
 };
 
 const restTickets = (listSale, flight) => {
@@ -35,4 +48,4 @@ const restTickets = (listSale, flight) => {
   };
 };
 
-module.exports = { cantBookTicket, isCancelTicket, restTickets };
+module.exports = { cantBookTicket, isCancelTicket, restTickets, getStatusTicket };

@@ -68,10 +68,15 @@ class HistorySale extends Model {
     });
   }
 
-  static async getHistorySaleByStatus(status) {
+  static async getHistorySaleByStatus(status, userID) {
+    if (!userID)
+      return await HistorySale.findAll({
+        raw: true,
+        where: { status: status },
+      });
     return await HistorySale.findAll({
       raw: true,
-      where: { status: status },
+      where: { status: status, userID: userID },
     });
   }
 }
@@ -85,7 +90,7 @@ HistorySale.init(
     },
 
     userID: {
-      type: Sequelize.STRING,
+      type: Sequelize.INTEGER,
       BelongsTo: User,
       allowNull: false,
     },

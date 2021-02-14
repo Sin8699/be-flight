@@ -2,9 +2,9 @@ const router = require('express').Router();
 const historySale = require('../models/history-sale');
 const flight = require('../models/flight');
 const asyncHandler = require('express-async-handler');
-const { TYPE_SEAT } = require('../constant');
+const { TYPE_SEAT, ROLE_USER, STATUS_TICKET } = require('../constant');
 const config = require('../configs');
-const { cantBookTicket, restTickets } = require('../helpers/sale');
+const { cantBookTicket, restTickets, getStatusTicket } = require('../helpers/sale');
 const _ = require('lodash');
 
 router.get(
@@ -164,22 +164,33 @@ router.post(
   })
 );
 
-router.get(
-  '/get-sale-paid',
-  asyncHandler(async function getListHistorySaleUnpaid(req, res) {
-    const listSalePaid = await historySale.getHistorySaleByStatus(true);
-    res.json({
-      listSalePaid: listSalePaid,
-    });
-  })
-);
+// router.get(
+//   '/get-sale-paid',
+//   asyncHandler(async function getListHistorySaleUnpaid(req, res) {
+//     const listSalePaid = await historySale.getHistorySaleByStatus(true);
+//     res.json({
+//       listSalePaid: listSalePaid,
+//     });
+//   })
+// );
 
 router.get(
-  '/get-sale-unpaid',
+  '/get-sale-by-status/:status',
   asyncHandler(async function getListHistorySaleUnpaid(req, res) {
-    const listSaleUnpaid = await historySale.getHistorySaleByStatus(false);
+    const { status } = req.params;
     const stateUser = _.get(req, 'user.dataValues');
     const userID = stateUser.id;
+
+    const statusMap = getStatusTicket(status);
+    const listSaleUnpaid = await historySale.getHistorySaleByStatus(
+      !!statusMap,
+      stateUser.role === ROLE_USER.ADMIN ? null : userID
+    );
+
+    if (status === STATUS_TICKET.PAID)
+      return res.json({
+        [`${status}List`]: listSaleUnpaid,
+      });
 
     let listCancel = [];
 
@@ -210,19 +221,30 @@ router.get(
       }
     );
 
+    if (status === STATUS_TICKET.CANCELED) {
+      const listSaleCancelUpdated = await historySale.getHistorySaleByStatus(
+        statusMap,
+        stateUser.role === ROLE_USER.ADMIN ? null : userID
+      );
+
+      return res.json({
+        [`${status}List`]: listSaleCancelUpdated,
+      });
+    }
+
     res.json({
-      listSaleUnpaid: _.differenceBy(listSaleUnpaid, listCancel, 'id'),
+      [`${status}List`]: _.differenceBy(listSaleUnpaid, listCancel, 'id'),
     });
   })
 );
 
-router.get(
-  '/get-sale-canceled',
-  asyncHandler(async function getListHistorySaleCanceled(req, res) {
-    const listSaleCanceled = await historySale.getHistorySaleByStatus(null);
-    res.json({
-      listSaleCanceled: listSaleCanceled,
-    });
-  })
-);
+// router.get(
+//   '/get-sale-canceled',
+//   asyncHandler(async function getListHistorySaleCanceled(req, res) {
+//     const listSaleCanceled = await historySale.getHistorySaleByStatus(null);
+//     res.json({
+//       listSaleCanceled: listSaleCanceled,
+//     });
+//   })
+// );
 module.exports = router;

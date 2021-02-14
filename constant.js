@@ -8,10 +8,17 @@ const TYPE_SEAT = {
   NORMAL: 'NORMAL',
 };
 
+const STATUS_TICKET = {
+  PAID: 'paid',
+  UNPAID: 'unpaid',
+  CANCELED: 'canceled',
+};
+
 const ROLE = [ROLE_USER.ADMIN, ROLE_USER.GUEST];
 
 module.exports = {
   ROLE,
   ROLE_USER,
   TYPE_SEAT,
+  STATUS_TICKET,
 };
