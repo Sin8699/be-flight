@@ -20,6 +20,13 @@ class MiddleAirport extends Model {
     });
   }
 
+  static async findMiddleAirport(where) {
+    return MiddleAirport.find({
+      where: where,
+      order: [['order', 'ASC']],
+    });
+  }
+
   static createMiddleAirport = async ({ flightCode, airportCode, timeDelay }) => {
     return await MiddleAirport.create({
       flightCode,
@@ -28,13 +35,14 @@ class MiddleAirport extends Model {
     });
   };
 
-  static updateMiddleAirport = async ({ flightCode, airportCode, timeDelay }) => {
+  static updateMiddleAirport = async ({ flightCode, airportCode, timeDelay, id }) => {
     return await MiddleAirport.update(
       {
         timeDelay: timeDelay,
       },
       {
         where: {
+          id: id,
           and: [{ flightCode: flightCode }, { airportCode: airportCode }],
         },
       }

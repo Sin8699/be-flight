@@ -1,3 +1,5 @@
+const dayjs = require('dayjs');
+
 const isWrongDateStartEnd = (dateStart, dateEnd) => {
   const date1 = dayjs(dateStart);
   const date2 = dayjs(dateEnd);

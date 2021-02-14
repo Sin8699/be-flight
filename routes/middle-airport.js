@@ -3,6 +3,8 @@ const middleAirport = require('../models/middle-airport');
 const asyncHandler = require('express-async-handler');
 const requireRole = require('../middlewares/require-role');
 const { ROLE_USER } = require('../constant');
+const Sequelize = require('sequelize');
+const Op = Sequelize.Op;
 
 router.get(
   '/',
@@ -51,15 +53,30 @@ router.get(
 );
 
 router.post(
-  '/update-middle-airport',
+  '/update-middle-airport/:id',
   requireRole(ROLE_USER.ADMIN),
   asyncHandler(async function updateMiddleAirport(req, res) {
     const { flightCode, airportCode, timeDelay, order = 0 } = req.body;
+    const { id } = req.params;
+
+    const checkMiddleAirportIsExisted = middleAirport.findMiddleAirport({
+      flightCode,
+      airportCode,
+      id: {
+        [Op.ne]: id,
+      },
+    });
+
+    if (checkMiddleAirportIsExisted) {
+      return res.status(401).json({ message: 'Middle airport existed' });
+    }
+
     await middleAirport
       .updateMiddleAirport({
         flightCode,
         airportCode,
         timeDelay,
+        id,
       })
       .then(async () => {
         res.json({ message: 'middle airport update successfully' });
@@ -78,6 +95,16 @@ router.post(
   requireRole(ROLE_USER.ADMIN),
   asyncHandler(async function getListMiddleAirport(req, res) {
     const { flightCode, airportCode, timeDelay, order = 0 } = req.body;
+
+    const checkMiddleAirportIsExisted = middleAirport.findMiddleAirport({
+      flightCode,
+      airportCode,
+    });
+
+    if (checkMiddleAirportIsExisted) {
+      return res.status(401).json({ message: 'Middle airport existed' });
+    }
+
     await middleAirport
       .createMiddleAirport({
         flightCode,
