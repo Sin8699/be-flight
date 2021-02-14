@@ -76,8 +76,8 @@ router.post(
     }
 
     const totalPrize = vipSeats * flightSale.vipPrice + normalSeats * flightSale.normalPrice;
-    console.log('totalPrize', totalPrize);
-    if (totalPrize > stateUser.accountBalance) {
+
+    if (status && totalPrize > stateUser.accountBalance) {
       return res.status(401).json({
         message: "Account balance don't enough",
       });
@@ -106,7 +106,7 @@ router.post(
           status,
         });
 
-      await user.updateMoney(userID, stateUser.accountBalance - totalPrize);
+      if (status) await user.updateMoney(userID, stateUser.accountBalance - totalPrize);
 
       res.json({ message: 'historySale created successfully' });
     } catch (error) {
