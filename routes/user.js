@@ -8,6 +8,8 @@ const configs = require('../configs');
 const Sequelize = require('sequelize');
 const Op = Sequelize.Op;
 const HelperUser = require('../helpers/user');
+const { ROLE_USER } = require('../constant');
+const requireRole = require('../middlewares/require-role');
 
 router.get('/', passport.authenticate('jwt', { session: false }), async (req, res) => {
   const stateUser = _.get(req, 'user.dataValues');
@@ -60,6 +62,30 @@ router.post('/register', function (req, res, next) {
     fullName,
     numberPhone,
     accountBalance,
+  })
+    .then(async (user) => {
+      const token = HelperUser.generalToken(user);
+
+      res.json({ message: 'User created successfully', token });
+    })
+    .catch((err) => {
+      console.log('err', err);
+      res.status(401).json({
+        error: 'Error when create account.',
+      });
+    });
+});
+
+router.post('/create-user', requireRole(ROLE_USER.ADMIN), function (req, res, next) {
+  const { username, password, email, fullName, numberPhone, accountBalance, role } = req.body;
+  User.createUser({
+    username,
+    password,
+    email,
+    fullName,
+    numberPhone,
+    accountBalance,
+    role,
   })
     .then(async (user) => {
       const token = HelperUser.generalToken(user);
@@ -154,13 +180,8 @@ router.post('/reset-password/:token', async (req, res) => {
   });
 });
 
-router.put('/update-user', passport.authenticate('jwt', { session: false }), async (req, res) => {
+router.put('/update-user', requireRole(ROLE_USER.ADMIN), async (req, res) => {
   const stateUser = _.get(req, 'user.dataValues');
-  if (stateUser.role !== 'ADMIN') {
-    return res.status(403).send({
-      error: 'Forbidden',
-    });
-  }
 
   const data = _.get(req, 'body');
   const userId = stateUser.id;
