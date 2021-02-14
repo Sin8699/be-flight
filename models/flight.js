@@ -112,14 +112,14 @@ Flight.init(
     },
 
     airportFrom: {
-      type: Sequelize.STRING,
+      type: Sequelize.INTEGER,
       belongsTo: Airport,
 
       allowNull: false,
     },
 
     airportTo: {
-      type: Sequelize.STRING,
+      type: Sequelize.INTEGER,
       belongsTo: Airport,
       allowNull: false,
     },
