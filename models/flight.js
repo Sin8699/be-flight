@@ -2,8 +2,8 @@ const Sequelize = require('sequelize');
 const Airport = require('./airport');
 const db = require('../db');
 const configTimestamps = require('../configs/timestamps');
-
 const Model = Sequelize.Model;
+const Op = Sequelize.Op;
 
 class Flight extends Model {
   static async getAllFlight() {
@@ -24,6 +24,9 @@ class Flight extends Model {
     return Flight.findOne({
       where: {
         id,
+        dateStart: {
+          [Op.gt]: new Date(),
+        },
       },
     });
   }

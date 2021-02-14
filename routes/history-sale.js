@@ -59,6 +59,7 @@ router.post(
     const userID = stateUser.id;
 
     const flightSale = await flight.getFlightByFlightCode(flightCode);
+
     if (!flightSale) {
       return res.status(401).json({
         error: "Flight don't exist",
@@ -67,7 +68,7 @@ router.post(
 
     if (cantBookTicket(flightSale.dateStart)) {
       return res.status(401).json({
-        error: `Tickets must be booked ${config.bookedBeforeDay} day before take off`,
+        error: `Tickets must be booked ${config.bookedBeforeHour / 24} day before take off`,
       });
     }
 
