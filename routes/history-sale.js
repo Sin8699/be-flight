@@ -4,7 +4,7 @@ const flight = require('../models/flight');
 const asyncHandler = require('express-async-handler');
 const { TYPE_SEAT } = require('../constant');
 const config = require('../configs');
-const { cantBookTicket } = require('../helpers/sale');
+const { cantBookTicket, restTickets } = require('../helpers/sale');
 const _ = require('lodash');
 
 router.get(
@@ -59,6 +59,9 @@ router.post(
     const userID = stateUser.id;
 
     const flightSale = await flight.getFlightByFlightCode(flightCode);
+    const sale = await historySale.getAllTotalSeatByFlightCode(flightCode);
+    const restTicket = restTickets(sale);
+    console.log('restTicket', restTicket);
 
     if (!flightSale) {
       return res.status(401).json({
@@ -74,7 +77,7 @@ router.post(
 
     try {
       if (!!vipSeats) {
-        if (flightSale.vipSeats >= vipSeats) {
+        if (restTicket.vipSeats >= vipSeats) {
           await historySale.createHistorySale({
             userID,
             flightCode,
@@ -83,12 +86,12 @@ router.post(
             status,
           });
 
-          flightSale.vipSeats -= vipSeats;
+          // flightSale.vipSeats -= vipSeats;
         } else return res.status(400).json({ message: 'Sold out vip seats' });
       }
 
       if (!!normalSeats) {
-        if (flightSale.normalSeats >= normalSeats) {
+        if (restTicket.normalSeats >= normalSeats) {
           await historySale.createHistorySale({
             userID,
             flightCode,
@@ -97,11 +100,11 @@ router.post(
             status,
           });
 
-          flightSale.normalSeats -= normalSeats;
+          // flightSale.normalSeats -= normalSeats;
         } else return res.status(400).json({ message: 'Sold out normal seats' });
       }
 
-      flightSale.save();
+      // flightSale.save();
 
       res.json({ message: 'historySale created successfully' });
     } catch (error) {

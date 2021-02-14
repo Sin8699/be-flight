@@ -50,6 +50,17 @@ class HistorySale extends Model {
     return HistorySale.findAll();
   }
 
+  static async getAllTotalSeatByFlightCode(flightCode) {
+    return HistorySale.findAll({
+      where: {
+        flightCode: `${flightCode}`,
+      },
+      raw: true,
+      attributes: ['typeSeat', [Sequelize.fn('sum', Sequelize.col('numberSeat')), 'total_seat']],
+      group: ['history-sale.typeSeat'],
+    });
+  }
+
   static async getHistorySaleByUser(userID) {
     return await HistorySale.findOne({
       where: { userID: userID },
