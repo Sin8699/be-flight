@@ -1,6 +1,8 @@
 const router = require('express').Router();
 const middleAirport = require('../models/middle-airport');
 const asyncHandler = require('express-async-handler');
+const requireRole = require('../middlewares/require-role');
+const { ROLE_USER } = require('../constant');
 
 router.get(
   '/',

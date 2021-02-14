@@ -4,6 +4,8 @@ const flight = require('../models/flight');
 const asyncHandler = require('express-async-handler');
 const { TYPE_SEAT } = require('../constant');
 const config = require('../configs');
+const { cantBookTicket } = require('../helpers/sale');
+const _ = require('lodash');
 
 router.get(
   '/',
@@ -63,37 +65,40 @@ router.post(
       });
     }
 
-    const currentDate = new Date();
-    if (new Date(flightSale.dateStart - currentDate).getDate() < config.bookedBeforeDay) {
+    if (cantBookTicket(flightSale.dateStart)) {
       return res.status(401).json({
         error: `Tickets must be booked ${config.bookedBeforeDay} day before take off`,
       });
     }
 
     try {
-      if (!!vipSeats && flightSale.vipSeats >= vipSeats) {
-        await historySale.createHistorySale({
-          userID,
-          flightCode,
-          typeSeat: TYPE_SEAT.VIP,
-          numberSeat: vipSeats,
-          status,
-        });
+      if (!!vipSeats) {
+        if (flightSale.vipSeats >= vipSeats) {
+          await historySale.createHistorySale({
+            userID,
+            flightCode,
+            typeSeat: TYPE_SEAT.VIP,
+            numberSeat: vipSeats,
+            status,
+          });
 
-        flightSale.vipSeats -= vipSeats;
-      } else return res.status(400).json({ message: 'Sold out vip seats' });
+          flightSale.vipSeats -= vipSeats;
+        } else return res.status(400).json({ message: 'Sold out vip seats' });
+      }
 
-      if (!!normalSeats && flightSale.normalSeats >= normalSeats) {
-        await historySale.createHistorySale({
-          userID,
-          flightCode,
-          typeSeat: TYPE_SEAT.NORMAL,
-          numberSeat: normalSeats,
-          status,
-        });
+      if (!!normalSeats) {
+        if (flightSale.normalSeats >= normalSeats) {
+          await historySale.createHistorySale({
+            userID,
+            flightCode,
+            typeSeat: TYPE_SEAT.NORMAL,
+            numberSeat: normalSeats,
+            status,
+          });
 
-        flightSale.normalSeats -= normalSeats;
-      } else return res.status(400).json({ message: 'Sold out normal seats' });
+          flightSale.normalSeats -= normalSeats;
+        } else return res.status(400).json({ message: 'Sold out normal seats' });
+      }
 
       flightSale.save();
 
@@ -168,6 +173,13 @@ router.get(
   '/get-sale-unpaid',
   asyncHandler(async function getListHistorySaleUnpaid(req, res) {
     const listSaleUnpaid = await historySale.getHistorySaleByStatus(false);
+
+    listSaleUnpaid.forEach(async (item) => {
+      const flight = await flight.getFlightByFlightCode(item.flightCode);
+
+      if (isCancelTicket(flight.dateStart)) {
+      }
+    });
     res.json({
       listSaleUnpaid: listSaleUnpaid,
     });
