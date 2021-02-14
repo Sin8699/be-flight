@@ -5,7 +5,7 @@ const user = require('../models/user');
 const asyncHandler = require('express-async-handler');
 const { TYPE_SEAT, ROLE_USER, STATUS_TICKET } = require('../constant');
 const config = require('../configs');
-const { cantBookTicket, restTickets, getStatusTicket } = require('../helpers/sale');
+const { cantBookTicket, restTickets, getStatusTicket, cantCancelTicket } = require('../helpers/sale');
 const _ = require('lodash');
 
 router.get(
@@ -147,17 +147,58 @@ router.post(
 //   })
 // );
 
+// router.post(
+//   '/cancel-booked-ticket',
+//   asyncHandler(async function updateStatusSale(req, res) {
+//     const { flightCode, typeSeat } = req.query;
+//     const stateUser = _.get(req, 'user.dataValues');
+//     const userID = stateUser.id;
+
+//     await historySale
+//       .updateTypeSeatHistorySale({ userID, flightCode, typeSeat })
+//       .then(async () => {
+//         res.json({ message: 'historySale type seat status successfully' });
+//       })
+//       .catch((err) => {
+//         res.status(401).json({
+//           error: 'Error when update type seat historySale.',
+//           err: err,
+//         });
+//       });
+//   })
+// );
+
 router.post(
-  '/update-type-seat',
+  '/cancel-ticket/:id',
   asyncHandler(async function updateStatusSale(req, res) {
-    const { flightCode, typeSeat } = req.query;
+    const { id } = req.params;
     const stateUser = _.get(req, 'user.dataValues');
-    const userID = stateUser.id;
+
+    const sale = await historySale.getById({ id });
+
+    if (sale.status === null)
+      return res.status(401).json({
+        message: 'Cant cancel ticket canceled',
+      });
+
+    const flightSale = await flight.getFlightByFlightCodeNotCondition(sale.flightCode);
+
+    if (cantCancelTicket(flightSale.dateStart)) {
+      return res.status(401).json({
+        message: `Tickets must be cancel ${config.cancelBeforeHour / 24} day before take off`,
+      });
+    }
+
+    const totalPrize =
+      (sale.vipSeats * flightSale.vipPrice + normalSeats * flightSale.normalPrice) *
+      (sale.status === false ? config.prizeBooked : 1);
 
     await historySale
-      .updateTypeSeatHistorySale({ userID, flightCode, typeSeat })
+      .updateStatusHistorySale({ id, status: null })
       .then(async () => {
-        res.json({ message: 'historySale type seat status successfully' });
+        await user.updateMoney(userID, stateUser.accountBalance + totalPrize);
+
+        res.json({ message: 'Ticket cancel successfully' });
       })
       .catch((err) => {
         res.status(401).json({

@@ -32,15 +32,14 @@ class HistorySale extends Model {
     );
   };
 
-  static updateStatusHistorySale = async ({ userID, flightCode, status }) => {
+  static updateStatusHistorySale = async ({ id, status }) => {
     return await HistorySale.update(
       {
         status: status,
       },
       {
         where: {
-          flightCode: flightCode,
-          userID: userID,
+          id,
         },
       }
     );
@@ -48,6 +47,12 @@ class HistorySale extends Model {
 
   static async getAllSale() {
     return HistorySale.findAll();
+  }
+
+  static async getById({ id }) {
+    return HistorySale.findOne({
+      where: { id },
+    });
   }
 
   static async getAllTotalSeatByFlightCode(flightCode) {

@@ -9,11 +9,11 @@ const cantBookTicket = (dateStart) => {
   return date1.diff(now, 'hour', true) < config.bookedBeforeHour;
 };
 
-const isCancelTicket = (dateStart) => {
+const cantCancelTicket = (dateStart) => {
   const now = dayjs();
   const date1 = dayjs(dateStart);
 
-  return date1.diff(now, 'hour', true) < 0.1;
+  return date1.diff(now, 'hour', true) < config.cancelBeforeHour;
 };
 
 const getStatusTicket = (status) => {
@@ -54,4 +54,4 @@ const restTickets = (listSale, flight) => {
   };
 };
 
-module.exports = { cantBookTicket, isCancelTicket, restTickets, getStatusTicket };
+module.exports = { cantBookTicket, cantCancelTicket, restTickets, getStatusTicket };
