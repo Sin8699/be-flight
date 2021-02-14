@@ -5,6 +5,7 @@ const { ROLE_USER } = require('../constant');
 const passport = require('passport');
 const requireRole = require('../middlewares/require-role');
 const _ = require('lodash');
+const { isWrongDateStartEnd } = require('../helpers/flight');
 
 router.get(
   '/create-data',
@@ -96,6 +97,8 @@ router.get('/:flightCode', passport.authenticate('jwt', { session: false }), asy
 router.post('/create-flight', requireRole(ROLE_USER.ADMIN), async (req, res) => {
   const { airportFrom, airportTo, dateStart, dateEnd, status, vipSeats, normalSeats, vipPrice, normalPrice } = req.body;
 
+  if (isWrongDateStartEnd(dateStart, dateEnd)) return res.status(401).json({ message: 'dateStart is before dateEnd' });
+
   flight
     .createFlight({
       airportFrom,
@@ -121,6 +124,8 @@ router.post('/create-flight', requireRole(ROLE_USER.ADMIN), async (req, res) => 
 
 router.post('/update-flight', requireRole(ROLE_USER.ADMIN), async (req, res) => {
   const { airportFrom, airportTo, dateStart, dateEnd, status, vipSeats, normalSeats, vipPrice, normalPrice } = req.body;
+
+  if (isWrongDateStartEnd(dateStart, dateEnd)) return res.status(401).json({ message: 'dateStart is before dateEnd' });
 
   dateEnd = dateEnd;
   console.log(dateEnd);
