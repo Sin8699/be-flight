@@ -2,7 +2,8 @@ const router = require('express').Router();
 const airport = require('../models/airport');
 const asyncHandler = require('express-async-handler');
 
-router.get('/',
+router.get(
+  '/',
   asyncHandler(async function getListAirport(req, res) {
     const listAirport = await airport.getAllAirport();
     res.json({
@@ -11,42 +12,42 @@ router.get('/',
   })
 );
 
-router.get('/create-data',
+router.get(
+  '/create-data',
   asyncHandler(async function (req, res) {
     for (let i = 0; i < 5; i++) {
-      const name = "Airport " + i.toString();
-      const airportCode = "A " + i.toString();
-      const address = "address " + i.toString();
+      const name = 'Airport ' + i.toString();
+      const address = 'address ' + i.toString();
       await airport.createAirport({
         name,
-        airportCode,
         address,
-      })
+      });
     }
     res.json({
-      status: "Done"
-    })
-  })
-);
-
-router.get('/:airportCode',
-  asyncHandler(async function getAirport(req, res) {
-    const { airportCode } = req.params;
-    const airportInfor = await airport.getAirportByAirportCode(airportCode);
-    res.json({
-      airportInfor: airportInfor,
+      status: 'Done',
     });
   })
 );
 
-router.post('/create-airport',
+router.get(
+  '/:id',
+  asyncHandler(async function getAirport(req, res) {
+    const { id } = req.params;
+    const airportInfo = await airport.getAirportByAirportCode(airportCode);
+    res.json({
+      airportInfo: airportInfo,
+    });
+  })
+);
+
+router.post(
+  '/create-airport',
   asyncHandler(async function createAirport(req, res) {
-    const { name, airportCode, address } = req.body;
+    const { name, address } = req.body;
 
     airport
       .createAirport({
         name,
-        airportCode,
         address,
       })
       .then(async () => {
@@ -61,14 +62,17 @@ router.post('/create-airport',
   })
 );
 
-router.post('/update-airport',
+router.post(
+  '/update-airport/:id',
   asyncHandler(async function updateAirport(req, res) {
-    const { name, airportCode, address } = req.body;
+    const { name, address } = req.body;
+    const { id } = req.params;
+
     airport
       .updateAirport({
         name,
-        airportCode,
         address,
+        id,
       })
       .then(async () => {
         res.json({ message: 'Airport update successfully' });
