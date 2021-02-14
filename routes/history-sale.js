@@ -75,9 +75,11 @@ router.post(
       });
     }
 
-    const totalPrize = vipSeats * flightSale.vipPrice + normalSeats * flightSale.normalPrice;
+    const totalPrize =
+      (vipSeats * flightSale.vipPrice + normalSeats * flightSale.normalPrice) *
+      (status === false ? config.prizeBooked : 1);
 
-    if (status && totalPrize > stateUser.accountBalance) {
+    if (totalPrize > stateUser.accountBalance) {
       return res.status(401).json({
         message: "Account balance don't enough",
       });
@@ -106,7 +108,7 @@ router.post(
           status,
         });
 
-      if (status) await user.updateMoney(userID, stateUser.accountBalance - totalPrize);
+      await user.updateMoney(userID, stateUser.accountBalance - totalPrize);
 
       res.json({ message: 'historySale created successfully' });
     } catch (error) {

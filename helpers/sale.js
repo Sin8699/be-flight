@@ -30,6 +30,12 @@ const getStatusTicket = (status) => {
 };
 
 const restTickets = (listSale, flight) => {
+  if (!flight)
+    return {
+      normalSeats: 0,
+      vipSeats: 0,
+    };
+
   let normalSeats = flight.normalSeats;
   let vipSeats = flight.vipSeats;
 
