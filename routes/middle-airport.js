@@ -59,7 +59,7 @@ router.post(
     const { flightCode, airportCode, timeDelay, order = 0 } = req.body;
     const { id } = req.params;
 
-    const checkMiddleAirportIsExisted = middleAirport.findMiddleAirport({
+    const checkMiddleAirportIsExisted = await middleAirport.findMiddleAirport({
       flightCode,
       airportCode,
       id: {
@@ -76,10 +76,11 @@ router.post(
         flightCode,
         airportCode,
         timeDelay,
+        order,
         id,
       })
       .then(async () => {
-        res.json({ message: 'middle airport update successfully' });
+        res.json({ message: 'Middle airport update successfully' });
       })
       .catch((err) => {
         res.json({
@@ -96,7 +97,7 @@ router.post(
   asyncHandler(async function getListMiddleAirport(req, res) {
     const { flightCode, airportCode, timeDelay, order = 0 } = req.body;
 
-    const checkMiddleAirportIsExisted = middleAirport.findMiddleAirport({
+    const checkMiddleAirportIsExisted = await middleAirport.findMiddleAirport({
       flightCode,
       airportCode,
     });
@@ -110,9 +111,10 @@ router.post(
         flightCode,
         airportCode,
         timeDelay,
+        order,
       })
       .then(async () => {
-        res.json({ message: 'middle airport created successfully' });
+        res.json({ message: 'Middle airport created successfully' });
       })
       .catch((err) => {
         res.json({
