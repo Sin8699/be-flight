@@ -76,7 +76,6 @@ router.post(
 
     try {
       if (!!vipSeats) {
-        console.log('vipSeats', vipSeats);
         if (restTicket.vipSeats >= vipSeats) {
           await historySale.createHistorySale({
             userID,

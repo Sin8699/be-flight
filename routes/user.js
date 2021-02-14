@@ -52,14 +52,13 @@ router.post('/login', async function (req, res, next) {
 });
 
 router.post('/register', function (req, res, next) {
-  const { username, password, email, fullName, numberPhone, role, accountBalance } = req.body;
+  const { username, password, email, fullName, numberPhone, accountBalance } = req.body;
   User.createUser({
     username,
     password,
     email,
     fullName,
     numberPhone,
-    role,
     accountBalance,
   })
     .then(async (user) => {
