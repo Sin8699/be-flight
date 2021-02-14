@@ -69,7 +69,7 @@ router.post(
       });
     }
 
-    if (cantBookTicket(flightSale.dateStart)) {
+    if (status === false && cantBookTicket(flightSale.dateStart)) {
       return res.status(401).json({
         message: `Tickets must be booked ${config.bookedBeforeHour / 24} day before take off`,
       });
