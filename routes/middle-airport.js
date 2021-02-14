@@ -6,6 +6,7 @@ const { ROLE_USER } = require('../constant');
 
 router.get(
   '/',
+  requireRole(ROLE_USER.ADMIN),
   asyncHandler(async function getListMiddleAirport(req, res) {
     const listMiddleAirport = await middleAirport.getAllMiddleAirport();
     res.json({
@@ -31,14 +32,16 @@ router.get(
     for (let i = 0; i < 5; i++) {
       const index = Math.floor(Math.random() * Math.floor(5));
       const index1 = Math.floor(Math.random() * Math.floor(5));
-      const flightCode = 'F ' + index;
-      const airportCode = 'A ' + index1;
+      const flightCode = index;
+      const order = index;
+      const airportCode = index1;
       const timeDelay = '01:00:00';
 
       await middleAirport.createMiddleAirport({
         flightCode,
         airportCode,
         timeDelay,
+        order,
       });
     }
     res.json({

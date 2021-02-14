@@ -16,6 +16,7 @@ class MiddleAirport extends Model {
       where: {
         flightCode: flightCode,
       },
+      order: [['order', 'ASC']],
     });
   }
 
@@ -43,6 +44,12 @@ class MiddleAirport extends Model {
 
 MiddleAirport.init(
   {
+    id: {
+      type: Sequelize.INTEGER,
+      autoIncrement: true,
+      primaryKey: true,
+    },
+
     flightCode: {
       type: Sequelize.INTEGER,
       BelongsTo: Flight,
@@ -50,7 +57,7 @@ MiddleAirport.init(
     },
 
     airportCode: {
-      type: Sequelize.STRING,
+      type: Sequelize.INTEGER,
       BelongsTo: Airport,
       allowNull: false,
     },
