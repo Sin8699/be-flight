@@ -56,11 +56,13 @@ class User extends Model {
       }
     );
   }
+
   static async findUserByQuery(where) {
     return await User.findAll({
       where,
     });
   }
+
   static createUser = async ({ username, password, email, fullName, role, accountBalance, numberPhone }) => {
     return await User.create({
       username,
@@ -72,6 +74,19 @@ class User extends Model {
       role,
     });
   };
+
+  static async updateMoney(id, accountBalance) {
+    return await User.update(
+      {
+        accountBalance,
+      },
+      {
+        where: {
+          id,
+        },
+      }
+    );
+  }
 }
 
 User.init(
