@@ -1,5 +1,5 @@
 // const Sequelize = require('sequelize');
-const { Sequelize } = require('sequelize');
+const { Sequelize,Op } = require('sequelize');
 // const {Sequelize} = Sequelize
 const db = require('../db');
 const Model = Sequelize.Model;
@@ -76,6 +76,16 @@ class HistorySale extends Model {
     return await HistorySale.findOne({
       raw: true,
       where: { userID: userID },
+    });
+  }
+
+  static async getHistorySaleByYear(year, userID) {
+    return await HistorySale.findAll({
+      where: { 
+        id : {
+          [Op.in]: Sequelize.literal(
+            `(SELECT "id" from "history-sales" WHERE EXTRACT(YEAR from"createdAt") = ${year} AND "userID" = ${userID} )`)}
+      },
     });
   }
 
