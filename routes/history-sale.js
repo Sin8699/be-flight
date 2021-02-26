@@ -28,11 +28,12 @@ router.get(
 );
 router.get(
   '/:year',
+  requireRole(ROLE_USER.ADMIN),
   asyncHandler(async function getListHistoryYear(req, res) {
     const { year } = req.params;
     const stateUser = _.get(req, 'user.dataValues');
     console.log(year);
-    const listSale = await historySale.getHistorySaleByYear(year,stateUser.id);
+    const listSale = await historySale.getHistorySaleByYear(year, stateUser.id);
     res.json({
       listSale: listSale,
     });
