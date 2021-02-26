@@ -26,7 +26,18 @@ router.get(
     }
   })
 );
-
+router.get(
+  '/:year',
+  asyncHandler(async function getListHistoryYear(req, res) {
+    const { year } = req.params;
+    const stateUser = _.get(req, 'user.dataValues');
+    console.log(year);
+    const listSale = await historySale.getHistorySaleByYear(year,stateUser.id);
+    res.json({
+      listSale: listSale,
+    });
+  })
+);
 router.get(
   '/create-data',
   asyncHandler(async function (req, res) {
