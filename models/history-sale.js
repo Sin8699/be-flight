@@ -89,6 +89,15 @@ class HistorySale extends Model {
     });
   }
 
+  static async getHistorySaleByYearMonth(year,month, userID) {
+    return await HistorySale.findAll({
+      where: { 
+        id : {
+          [Op.in]: Sequelize.literal(
+            `(SELECT "id" from "history-sales" WHERE EXTRACT(MONTH from"createdAt") = ${month} AND EXTRACT(YEAR from"createdAt") = ${year} AND "userID" = ${userID} )`)}
+      },
+    });
+  }
   static async getHistorySaleByStatus(status, userID) {
     if (!userID)
       return await HistorySale.findAll({

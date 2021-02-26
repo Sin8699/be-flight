@@ -40,6 +40,19 @@ router.get(
   })
 );
 router.get(
+  '/:year/:month',
+  requireRole(ROLE_USER.ADMIN),
+  asyncHandler(async function getListHistoryYear(req, res) {
+    const { year,month } = req.params;
+    const stateUser = _.get(req, 'user.dataValues');
+    console.log(year);
+    const listSale = await historySale.getHistorySaleByYearMonth(year, month, stateUser.id);
+    res.json({
+      listSale: listSale,
+    });
+  })
+);
+router.get(
   '/create-data',
   asyncHandler(async function (req, res) {
     for (let i = 0; i < 5; i++) {
