@@ -7,6 +7,7 @@ const { TYPE_SEAT, ROLE_USER, STATUS_TICKET } = require('../constant');
 const config = require('../configs');
 const { cantBookTicket, restTickets, getStatusTicket, cantCancelTicket } = require('../helpers/sale');
 const _ = require('lodash');
+const requireRole = require('../middlewares/require-role');
 
 router.get(
   '/',
@@ -26,6 +27,7 @@ router.get(
     }
   })
 );
+
 router.get(
   '/:year',
   requireRole(ROLE_USER.ADMIN),
@@ -43,7 +45,7 @@ router.get(
   '/:year/:month',
   requireRole(ROLE_USER.ADMIN),
   asyncHandler(async function getListHistoryYear(req, res) {
-    const { year,month } = req.params;
+    const { year, month } = req.params;
     const stateUser = _.get(req, 'user.dataValues');
     console.log(year);
     const listSale = await historySale.getHistorySaleByYearMonth(year, month, stateUser.id);
