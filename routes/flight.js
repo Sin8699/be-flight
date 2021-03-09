@@ -53,15 +53,11 @@ router.get('/', passport.authenticate('jwt', { session: false }), async (req, re
   try {
     if (stateUser.role === ROLE_USER.ADMIN) {
       const listFlight = await flight.getAllFlight();
-      return res.json({
-        ...listFlight,
-      });
+      return res.json(listFlight);
     }
 
     const listFlight = await flight.getAllFlightYetDepart();
-    res.json({
-      ...listFlight,
-    });
+    return res.json(listFlight);
   } catch (error) {
     console.log(err);
     return res.status(401).json({
@@ -77,15 +73,11 @@ router.get('/:flightCode', passport.authenticate('jwt', { session: false }), asy
   try {
     if (stateUser.role === ROLE_USER.ADMIN) {
       const listFlight = await flight.getFlightByFlightCode(flightCode);
-      return res.json({
-        ...listFlight,
-      });
+      return res.json(listFlight);
     }
 
     const listFlight = await flight.getFlightByFlightCodeYetDepart(flightCode);
-    res.json({
-      ...listFlight,
-    });
+    return res.json(listFlight);
   } catch (error) {
     console.log(err);
     return res.status(401).json({
