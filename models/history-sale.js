@@ -1,5 +1,5 @@
 // const Sequelize = require('sequelize');
-const { Sequelize,Op } = require('sequelize');
+const { Sequelize, Op } = require('sequelize');
 // const {Sequelize} = Sequelize
 const db = require('../db');
 const Model = Sequelize.Model;
@@ -46,12 +46,13 @@ class HistorySale extends Model {
   };
 
   static async getAllSale() {
-    return HistorySale.findAll();
+    return HistorySale.findAll({ raw: true });
   }
 
   static async getAllSaleByUser(userID) {
     return HistorySale.findAll({
       userID: userID,
+      raw: true,
     });
   }
 
@@ -81,20 +82,24 @@ class HistorySale extends Model {
 
   static async getHistorySaleByYear(year, userID) {
     return await HistorySale.findAll({
-      where: { 
-        id : {
+      where: {
+        id: {
           [Op.in]: Sequelize.literal(
-            `(SELECT "id" from "history-sales" WHERE EXTRACT(YEAR from"createdAt") = ${year} AND "userID" = ${userID} )`)}
+            `(SELECT "id" from "history-sales" WHERE EXTRACT(YEAR from"createdAt") = ${year} AND "userID" = ${userID} )`
+          ),
+        },
       },
     });
   }
 
-  static async getHistorySaleByYearMonth(year,month, userID) {
+  static async getHistorySaleByYearMonth(year, month, userID) {
     return await HistorySale.findAll({
-      where: { 
-        id : {
+      where: {
+        id: {
           [Op.in]: Sequelize.literal(
-            `(SELECT "id" from "history-sales" WHERE EXTRACT(MONTH from"createdAt") = ${month} AND EXTRACT(YEAR from"createdAt") = ${year} AND "userID" = ${userID} )`)}
+            `(SELECT "id" from "history-sales" WHERE EXTRACT(MONTH from"createdAt") = ${month} AND EXTRACT(YEAR from"createdAt") = ${year} AND "userID" = ${userID} )`
+          ),
+        },
       },
     });
   }

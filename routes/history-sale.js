@@ -8,6 +8,7 @@ const config = require('../configs');
 const { cantBookTicket, restTickets, getStatusTicket, cantCancelTicket } = require('../helpers/sale');
 const _ = require('lodash');
 const requireRole = require('../middlewares/require-role');
+const { getFlightByFlightCodeNotCondition } = require('../models/flight');
 
 router.get(
   '/',
@@ -16,13 +17,48 @@ router.get(
 
     if (stateUser.role === ROLE_USER.ADMIN) {
       const listSale = await historySale.getAllSale();
+      let listSaleWithFlight = [];
+
+      await Promise.all((listSale || []).map((item) => flight.getFlightByFlightCodeNotCondition(item.flightCode))).then(
+        (values) => {
+          listSaleWithFlight = listSale.map((item, i) => ({
+            ...item,
+            flightInfo: {
+              ...values[i],
+            },
+          }));
+        },
+        (reason) => {
+          console.log('reason', reason);
+        }
+      );
+
+      console.log('listSaleWithFlight', listSaleWithFlight);
+
       res.json({
-        listSale: listSale,
+        listSale: listSaleWithFlight,
       });
     } else {
       const listSale = await historySale.getAllSaleByUser(stateUser.id);
+
+      let listSaleWithFlight = [];
+
+      await Promise.all((listSale || []).map((item) => flight.getFlightByFlightCodeNotCondition(item.flightCode))).then(
+        (values) => {
+          listSaleWithFlight = listSale.map((item, i) => ({
+            ...item,
+            flightInfo: {
+              ...values[i],
+            },
+          }));
+        },
+        (reason) => {
+          console.log('reason', reason);
+        }
+      );
+
       res.json({
-        listSale: listSale,
+        listSale: listSaleWithFlight,
       });
     }
   })
