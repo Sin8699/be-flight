@@ -195,14 +195,11 @@ router.post('/reset-password/:token', async (req, res) => {
   });
 });
 
-router.put('/update-user', requireRole(ROLE_USER.ADMIN), async (req, res) => {
+router.post('/update-user', requireRole(ROLE_USER.ADMIN), async (req, res) => {
   const data = _.get(req, 'body');
-  const userId = data.id;
 
   try {
-    await User.updateUser(userId, {
-      ...data,
-    });
+    await User.updateUserByEmail(data);
     return res.json({
       message: 'Success updated user.',
     });

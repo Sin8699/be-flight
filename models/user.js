@@ -50,6 +50,18 @@ class User extends Model {
       }
     );
   }
+
+  static async updateUserByEmail({ email, ...rest }) {
+    return await User.update(
+      {
+        ...rest,
+      },
+      {
+        where: { email: email },
+      }
+    );
+  }
+
   static async updateForgot({ resetPasswordToken, resetPasswordExpireTime, userId }) {
     return await User.update(
       {
