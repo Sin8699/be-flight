@@ -18,8 +18,13 @@ class User extends Model {
       where: user,
     });
   }
-  static async getAllUsers() {
-    return await User.findAll();
+  static async getAllUsersGuest() {
+    return await User.findAll({
+      raw: true,
+      where: {
+        role: ROLE_USER.GUEST,
+      },
+    });
   }
 
   static async updatePassword(userId, newPass) {
