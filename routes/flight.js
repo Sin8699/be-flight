@@ -52,26 +52,27 @@ router.get(
 router.get('/', passport.authenticate('jwt', { session: false }), async (req, res) => {
   const stateUser = _.get(req, 'user.dataValues');
   try {
+    let listFlight = [];
     if (stateUser.role === ROLE_USER.ADMIN) {
-      const listFlight = await flight.getAllFlight();
-      const listAirport = await airport.getAllAirport();
-
-      const listResult = [];
-
-      for (let i = 0; i < listFlight.length; i++) {
-        const apT = findById(listFlight[i].airportFrom, listAirport);
-        const apF = findById(listFlight[i].airportFrom, listAirport);
-        listResult.push({
-          ...listFlight[i],
-          infoAirportTo: apT,
-          infoAirportFrom: apF,
-        });
-      }
-      return res.json(listResult);
+      listFlight = await flight.getAllFlight();
+    } else {
+      listFlight = await flight.getAllFlightYetDepart();
     }
 
-    const listFlight = await flight.getAllFlightYetDepart();
-    return res.json(listFlight);
+    const listAirport = await airport.getAllAirport();
+
+    const listResult = [];
+
+    for (let i = 0; i < listFlight.length; i++) {
+      const apT = findById(listFlight[i].airportTo, listAirport);
+      const apF = findById(listFlight[i].airportFrom, listAirport);
+      listResult.push({
+        ...listFlight[i],
+        infoAirportTo: apT,
+        infoAirportFrom: apF,
+      });
+    }
+    return res.json(listResult);
   } catch (error) {
     console.log(error);
     return res.status(401).json({
