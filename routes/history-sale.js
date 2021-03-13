@@ -33,8 +33,6 @@ router.get(
         }
       );
 
-      console.log('listSaleWithFlight', listSaleWithFlight);
-
       res.json({
         listSale: listSaleWithFlight,
       });

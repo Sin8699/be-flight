@@ -7,7 +7,7 @@ const configTimestamps = require('../configs/timestamps');
 
 class Airport extends Model {
   static async getAllAirport() {
-    return Airport.findAll();
+    return Airport.findAll({ raw: true });
   }
 
   static async getAirportByAirportCode(id) {

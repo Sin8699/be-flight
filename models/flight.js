@@ -7,7 +7,18 @@ const Op = Sequelize.Op;
 
 class Flight extends Model {
   static async getAllFlight() {
-    return Flight.findAll();
+    return Flight.findAll({ raw: true });
+  }
+
+  static async getAllFlightWithName() {
+    return Flight.findAll({
+      raw: true,
+      include: [
+        {
+          model: Airport,
+        },
+      ],
+    });
   }
 
   static async getAllFlightYetDepart() {
