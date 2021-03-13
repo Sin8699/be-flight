@@ -196,10 +196,8 @@ router.post('/reset-password/:token', async (req, res) => {
 });
 
 router.put('/update-user', requireRole(ROLE_USER.ADMIN), async (req, res) => {
-  const stateUser = _.get(req, 'user.dataValues');
-
   const data = _.get(req, 'body');
-  const userId = stateUser.id;
+  const userId = data.id;
 
   try {
     await User.updateUser(userId, {
