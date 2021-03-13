@@ -125,25 +125,16 @@ router.post('/update-flight', requireRole(ROLE_USER.ADMIN), async (req, res) => 
 
   if (isWrongDateStartEnd(dateStart, dateEnd)) return res.status(401).json({ message: 'dateStart is before dateEnd' });
 
-  dateEnd = dateEnd;
-  console.log(dateEnd);
-  dateStart = dateStart;
-  console.log(dateStart);
-  vipSeats = parseInt(vipSeats);
-  normalSeats = parseInt(normalSeats);
-  vipPrice = parseInt(vipPrice);
-  normalPrice = parseInt(normalPrice);
-
   flight
     .updateFlight({
       airportFrom,
       airportTo,
       dateStart,
       dateEnd,
-      vipSeats,
-      normalSeats,
-      vipPrice,
-      normalPrice,
+      vipSeats: +vipSeats,
+      normalSeats: +normalSeats,
+      vipPrice: +vipPrice,
+      normalPrice: +normalPrice,
     })
 
     .then(async () => {
