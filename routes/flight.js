@@ -55,8 +55,8 @@ router.get('/', passport.authenticate('jwt', { session: false }), async (req, re
     if (stateUser.role === ROLE_USER.ADMIN) {
       const listFlight = await flight.getAllFlight();
       for (let i = 0; i < listFlight.length; i++) {
-        const apT = airport.getAirportByAirportCode(listFlight[i].airportTo);
-        const apF = airport.getAirportByAirportCode(listFlight[i].airportFrom);
+        const apT = await airport.getAirportByAirportCode(listFlight[i].airportTo);
+        const apF = await airport.getAirportByAirportCode(listFlight[i].airportFrom);
         listFlight[i].airportTo = apT.name;
         listFlight[i].airportFrom = apF.name;
       }
