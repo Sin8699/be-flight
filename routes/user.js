@@ -28,6 +28,21 @@ router.get('/', passport.authenticate('jwt', { session: false }), async (req, re
   }
 });
 
+router.get('/all', requireRole(ROLE_USER.ADMIN), async (req, res) => {
+  try {
+    const users = await User.getAllUsersGuest();
+    return res.json({
+      message: 'Get user list successfully',
+      userList: users.map((user) => _.pick(user, ['fullName', 'email', 'numberPhone', 'accountBalance', 'role'])),
+    });
+  } catch (err) {
+    console.log(err);
+    return res.status(401).json({
+      message: 'User not found',
+    });
+  }
+});
+
 router.post('/login', async function (req, res, next) {
   const { email, hashPassword } = req.body;
 
