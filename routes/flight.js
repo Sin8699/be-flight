@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const asyncHandler = require('express-async-handler');
 const flight = require('../models/flight');
+const airport = require('../models/airport');
 const { ROLE_USER } = require('../constant');
 const passport = require('passport');
 const requireRole = require('../middlewares/require-role');
@@ -53,6 +54,12 @@ router.get('/', passport.authenticate('jwt', { session: false }), async (req, re
   try {
     if (stateUser.role === ROLE_USER.ADMIN) {
       const listFlight = await flight.getAllFlight();
+      for(let i = 0 ; i < listFlight.length; i++){
+        const apT =  airport.getAirportByAirportCode(listFlight[i].airportTo);
+        const apF =  airport.getAirportByAirportCode(listFlight[i].airportFrom);
+        listFlight[i].airportTo = apT.name;
+        listFlight[i].airportFrom = apF.name;
+      }
       return res.json(listFlight);
     }
 
