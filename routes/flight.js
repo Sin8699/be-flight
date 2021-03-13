@@ -54,9 +54,9 @@ router.get('/', passport.authenticate('jwt', { session: false }), async (req, re
   try {
     if (stateUser.role === ROLE_USER.ADMIN) {
       const listFlight = await flight.getAllFlight();
-      for(let i = 0 ; i < listFlight.length; i++){
-        const apT =  airport.getAirportByAirportCode(listFlight[i].airportTo);
-        const apF =  airport.getAirportByAirportCode(listFlight[i].airportFrom);
+      for (let i = 0; i < listFlight.length; i++) {
+        const apT = airport.getAirportByAirportCode(listFlight[i].airportTo);
+        const apF = airport.getAirportByAirportCode(listFlight[i].airportFrom);
         listFlight[i].airportTo = apT.name;
         listFlight[i].airportFrom = apF.name;
       }
@@ -121,7 +121,7 @@ router.post('/create-flight', requireRole(ROLE_USER.ADMIN), async (req, res) => 
 });
 
 router.post('/update-flight', requireRole(ROLE_USER.ADMIN), async (req, res) => {
-  const { airportFrom, airportTo, dateStart, dateEnd, status, vipSeats, normalSeats, vipPrice, normalPrice } = req.body;
+  const { airportFrom, airportTo, dateStart, dateEnd, vipSeats, normalSeats, vipPrice, normalPrice } = req.body;
 
   if (isWrongDateStartEnd(dateStart, dateEnd)) return res.status(401).json({ message: 'dateStart is before dateEnd' });
 
@@ -140,7 +140,6 @@ router.post('/update-flight', requireRole(ROLE_USER.ADMIN), async (req, res) => 
       airportTo,
       dateStart,
       dateEnd,
-      status,
       vipSeats,
       normalSeats,
       vipPrice,
