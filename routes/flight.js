@@ -7,6 +7,7 @@ const passport = require('passport');
 const requireRole = require('../middlewares/require-role');
 const _ = require('lodash');
 const { isWrongDateStartEnd } = require('../helpers/flight');
+const { findById } = require('../helpers/common');
 
 router.get(
   '/create-data',
@@ -50,23 +51,29 @@ router.get(
 
 router.get('/', passport.authenticate('jwt', { session: false }), async (req, res) => {
   const stateUser = _.get(req, 'user.dataValues');
-
   try {
     if (stateUser.role === ROLE_USER.ADMIN) {
       const listFlight = await flight.getAllFlight();
+      const listAirport = await airport.getAllAirport();
+
+      const listResult = [];
+
       for (let i = 0; i < listFlight.length; i++) {
-        const apT = await airport.getAirportByAirportCode(listFlight[i].airportTo);
-        const apF = await airport.getAirportByAirportCode(listFlight[i].airportFrom);
-        listFlight[i].airportTo = apT.name;
-        listFlight[i].airportFrom = apF.name;
+        const apT = findById(listFlight[i].airportFrom, listAirport);
+        const apF = findById(listFlight[i].airportFrom, listAirport);
+        listResult.push({
+          ...listFlight[i],
+          infoAirportTo: apT,
+          infoAirportFrom: apF,
+        });
       }
-      return res.json(listFlight);
+      return res.json(listResult);
     }
 
     const listFlight = await flight.getAllFlightYetDepart();
     return res.json(listFlight);
   } catch (error) {
-    console.log(err);
+    console.log(error);
     return res.status(401).json({
       message: 'Something not right',
     });
