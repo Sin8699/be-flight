@@ -51,7 +51,9 @@ class HistorySale extends Model {
 
   static async getAllSaleByUser(userID) {
     return HistorySale.findAll({
-      userID: userID,
+      where: {
+        userID: userID,
+      },
       raw: true,
     });
   }
