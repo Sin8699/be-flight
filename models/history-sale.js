@@ -82,24 +82,24 @@ class HistorySale extends Model {
     });
   }
 
-  static async getHistorySaleByYear(year, userID) {
+  static async getHistorySaleByYear(year) {
     return await HistorySale.findAll({
       where: {
         id: {
           [Op.in]: Sequelize.literal(
-            `(SELECT "id" from "history-sales" WHERE EXTRACT(YEAR from"createdAt") = ${year} AND "userID" = ${userID} )`
+            `(SELECT "id" from "history-sales" WHERE EXTRACT(YEAR from"createdAt") = ${year} )`
           ),
         },
       },
     });
   }
 
-  static async getHistorySaleByYearMonth(year, month, userID) {
+  static async getHistorySaleByYearMonth(year, month) {
     return await HistorySale.findAll({
       where: {
         id: {
           [Op.in]: Sequelize.literal(
-            `(SELECT "id" from "history-sales" WHERE EXTRACT(MONTH from"createdAt") = ${month} AND EXTRACT(YEAR from"createdAt") = ${year} AND "userID" = ${userID} )`
+            `(SELECT "id" from "history-sales" WHERE EXTRACT(MONTH from"createdAt") = ${month} AND EXTRACT(YEAR from"createdAt") = ${year} )`
           ),
         },
       },

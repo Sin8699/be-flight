@@ -69,9 +69,8 @@ router.get(
   requireRole(ROLE_USER.ADMIN),
   asyncHandler(async function getListHistoryYear(req, res) {
     const { year } = req.params;
-    const stateUser = _.get(req, 'user.dataValues');
     console.log(year);
-    const listSale = await historySale.getHistorySaleByYear(year, stateUser.id);
+    // const listSale = await historySale.getHistorySaleByYear(year);
     res.json({
       listSale: listSale,
     });
@@ -82,9 +81,8 @@ router.get(
   requireRole(ROLE_USER.ADMIN),
   asyncHandler(async function getListHistoryYear(req, res) {
     const { year, month } = req.params;
-    const stateUser = _.get(req, 'user.dataValues');
     console.log(year);
-    const listSale = await historySale.getHistorySaleByYearMonth(year, month, stateUser.id);
+    const listSale = await historySale.getHistorySaleByYearMonth(year, month);
     res.json({
       listSale: listSale,
     });

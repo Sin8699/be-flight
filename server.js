@@ -21,7 +21,7 @@ app.use(
   })
 );
 
-// // middlewares
+// middlewares
 app.use(passport.initialize());
 app.use(passport.session());
 require('./middlewares/passport')(passport);
