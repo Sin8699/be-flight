@@ -121,7 +121,7 @@ router.post('/create-flight', requireRole(ROLE_USER.ADMIN), async (req, res) => 
 });
 
 router.post('/update-flight', requireRole(ROLE_USER.ADMIN), async (req, res) => {
-  const { airportFrom, airportTo, dateStart, dateEnd, vipSeats, normalSeats, vipPrice, normalPrice } = req.body;
+  const { airportFrom, airportTo, dateStart, dateEnd, vipSeats, normalSeats, vipPrice, normalPrice, id } = req.body;
 
   if (isWrongDateStartEnd(dateStart, dateEnd)) return res.status(401).json({ message: 'dateStart is before dateEnd' });
 
@@ -131,12 +131,12 @@ router.post('/update-flight', requireRole(ROLE_USER.ADMIN), async (req, res) => 
       airportTo,
       dateStart,
       dateEnd,
-      vipSeats: +vipSeats,
-      normalSeats: +normalSeats,
-      vipPrice: +vipPrice,
-      normalPrice: +normalPrice,
+      vipSeats,
+      normalSeats,
+      vipPrice,
+      normalPrice,
+      id,
     })
-
     .then(async () => {
       res.json({ message: 'Flight update successfully' });
     })

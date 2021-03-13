@@ -84,6 +84,7 @@ class Flight extends Model {
     normalSeats,
     vipPrice,
     normalPrice,
+    id,
   }) => {
     return await Flight.update(
       {
@@ -97,7 +98,7 @@ class Flight extends Model {
         normalPrice: normalPrice,
       },
       {
-        where: { id: flightCode },
+        where: { id },
       }
     );
   };
