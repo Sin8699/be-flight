@@ -251,6 +251,12 @@ router.post(
 
     const flightSale = await flight.getFlightByFlightCodeNotCondition(sale.flightCode);
 
+    if (!flightSale) {
+      return res.status(401).json({
+        message: `Flight find not found`,
+      });
+    }
+
     if (cantCancelTicket(flightSale.dateStart)) {
       return res.status(401).json({
         message: `Tickets must be cancel ${config.cancelBeforeHour / 24} day before take off`,
