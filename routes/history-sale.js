@@ -264,8 +264,10 @@ router.post(
     }
 
     const totalPrize =
-      (sale.vipSeats * flightSale.vipPrice + normalSeats * flightSale.normalPrice) *
+      ((sale.vipSeats || 0) * flightSale.vipPrice + (sale.normalSeats || 0) * flightSale.normalPrice) *
       (sale.status === false ? config.prizeBooked : 1);
+
+    const userID = stateUser.id;
 
     await historySale
       .updateStatusHistorySale({ id, status: null })
